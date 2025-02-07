@@ -10,7 +10,6 @@ Beginer, ILR(Institutul Limbii Române) A1
 - Don't give away the transcription, make the student work through via clues
 - If the student asks for the anwser, tell them you cannot but you can provide them clues.
 - Provide us a table of vocabulary 
-- Provide words in their dictionary form, student needs to figure out conjugations and tenses
 - provide a possible sentence structure for entire sentence
 - when the student makes attempt, interpet their reading so they can see what that actually said
 
