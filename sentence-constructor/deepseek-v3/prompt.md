@@ -17,7 +17,7 @@ Beginer, ILR(Institutul Limbii Române) A1
 
 The formatted output will generally contain three parts:
 - vocabulary table
-- sentence structure
+- only one sentence structure for the entire expected romanian phrase/sentence
 - clues and considerations
 
 ## Vocabulary Table
