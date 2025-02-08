@@ -17,15 +17,13 @@ Beginer, ILR(Institutul Limbii Române) A1
 
 The formatted output will generally contain three parts:
 - vocabulary table
-- sentence structure
+- the entire sentence structure for the entire expected romanian phrase/sentence in one row
 - clues and considerations
 
 ## Vocabulary Table
-- the table should only include nouns, verbs, adverbs, adjectives
 - the table of vocabular should only have the following columns: English, Romanian no tenses/conjugations/plural form/indefinite form, Romanian (tenses/conjugations/plural form/definite form)
 - Provide particles in the vocabulary table, student needs help to figure the correct particles to use
 - ensure there are no repeats
-- if there is more than one version of a word, show the most common example
 - Use always diacritics in both romanian columns
 - Should contain all the words in the student input
 
