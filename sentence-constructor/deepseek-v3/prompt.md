@@ -23,7 +23,7 @@ The formatted output will generally contain three parts:
 ## Vocabulary Table
 - the table should only include nouns, verbs, adverbs, adjectives
 - the table of vocabular should only have the following columns: English, Romanian no tenses/conjugations/plural form/indefinite form, Romanian (tenses/conjugations/plural form/definite form)
-- Do not provide particles in the vocabulary table, student needs to figure the correct particles to use
+- Provide particles in the vocabulary table, student needs help to figure the correct particles to use
 - ensure there are no repeats
 - if there is more than one version of a word, show the most common example
 - Use always diacritics in both romanian columns
