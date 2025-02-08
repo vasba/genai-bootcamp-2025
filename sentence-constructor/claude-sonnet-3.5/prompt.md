@@ -20,11 +20,9 @@ The formatted output will generally contain three parts:
 - clues and considerations
 
 # Vocabulary Table
-- the table should only include nouns, verbs, adverbs, adjectives
 - the table of vocabular should only have the following columns: English, Romanian no tenses/conjugations/plural form/indefinite form, Romanian (tenses/conjugations/plural form/definite form)
 - Provide particles in the vocabulary table, student needs help to figure the correct particles to use
 - ensure there are no repeats
-- if there is more than one version of a word, show the most common example
 - Use always diacritics in both romanian columns
 - Should contain all the words in the student input
 
@@ -32,6 +30,7 @@ The formatted output will generally contain three parts:
 - do not provide particles in the sentence structure
 - do not provide tenses or conjugations in the sentence structure
 - remember to consider beginner level sentence structures
+
 Here is an example of simple sentence structures in romanian after translations.
 - The bird is black. → [Subject] [Verb] [Adjective].
 - The raven is in the garden. → [Subject] [Verb] [Location] .
