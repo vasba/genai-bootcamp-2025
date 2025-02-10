@@ -12,6 +12,7 @@ You have been tasked with creating the backend API of the application.
 * Use Spring
 * Use Kotlin
 * Use SQLite3 as the database
+* Use Gradle
 * Does not require authentication/authorization, assume there is a single user
 
 # Technical Specification
