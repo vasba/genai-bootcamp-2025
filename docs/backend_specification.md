@@ -9,10 +9,10 @@ A language learning school wants to build a prototype of learning portal which w
 You have been tasked with creating the backend API of the application.
 
 # Technical Restrictions:
+* Use Spring
+* Use Kotlin
 * Use SQLite3 as the database
-* You can use any language or framework 
 * Does not require authentication/authorization, assume there is a single user
-
 
 # Technical Specification
 
