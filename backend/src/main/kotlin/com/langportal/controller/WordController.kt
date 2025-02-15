@@ -31,13 +31,14 @@ class WordController(
         @RequestParam(defaultValue = "asc") order: String,
     ): ResponseEntity<WordsResponse> {
         val pageSize = 50 // Match Flask backend's page size
-        val validSortFields = listOf("romanian", "english")
-        val actualSortBy = if (sortBy in validSortFields) sortBy else "romanian"
+        val sortFieldMap = mapOf(
+            "romanian" to "sourceWord",
+            "english" to "targetWord"
+        )
+        val actualSortBy = sortFieldMap[sortBy] ?: "sourceWord"
         val actualOrder = if (order.lowercase() in listOf("asc", "desc")) order.lowercase() else "asc"
-
         val pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.fromString(actualOrder), actualSortBy))
         val wordsPage = wordService.getWords("", pageable)
-
         return ResponseEntity.ok(
             WordsResponse(
                 words = wordsPage.content.map { modelMapper.toWordDTO(it) },

@@ -18,7 +18,7 @@ data class Group(
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "group_words",
+        name = "word_groups",  // Changed from group_words to word_groups to match the schema
         joinColumns = [JoinColumn(name = "group_id")],
         inverseJoinColumns = [JoinColumn(name = "word_id")]
     )

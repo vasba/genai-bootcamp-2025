@@ -10,6 +10,7 @@ CREATE INDEX IF NOT EXISTS idx_words_english ON words(english);
 CREATE TABLE IF NOT EXISTS groups (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    description TEXT,
     words_count INTEGER DEFAULT 0
 );
 

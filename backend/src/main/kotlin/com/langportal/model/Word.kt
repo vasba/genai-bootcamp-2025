@@ -8,10 +8,13 @@ data class Word(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    @Column(nullable = false)
+    
+    @Column(name = "romanian", nullable = false)
     val sourceWord: String,
-    @Column(nullable = false)
+    
+    @Column(name = "english", nullable = false)
     val targetWord: String,
+    
     @ManyToMany(mappedBy = "words", fetch = FetchType.LAZY)
     val groups: MutableList<Group> = mutableListOf(),
 )

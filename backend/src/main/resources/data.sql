@@ -5,9 +5,9 @@ INSERT INTO words (romanian, english) VALUES
 ('scaun', 'chair'),
 ('fereastră', 'window');
 
-INSERT INTO groups (name, words_count) VALUES
-('Basic Nouns', 5),
-('Household Items', 4);
+INSERT INTO groups (name, description, words_count) VALUES
+('Basic Nouns', 'Common everyday nouns', 5),
+('Household Items', 'Items commonly found in a house', 4);
 
 INSERT INTO study_activities (name, url) VALUES
 ('Flashcards', '/study/flashcards'),

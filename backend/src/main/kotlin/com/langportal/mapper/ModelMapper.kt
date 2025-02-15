@@ -12,7 +12,7 @@ class ModelMapper {
             id = word.id!!, // Ensure id is non-nullable
             sourceWord = word.sourceWord,
             targetWord = word.targetWord,
-            groups = word.groups?.map { toGroupDTO(it) } ?: emptyList()
+            groups = word.groups?.map { toGroupWithoutWords(it) } ?: emptyList()
         )
     }
 
