@@ -26,8 +26,13 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.xerial:sqlite-jdbc:3.44.1.0")
-    implementation("org.hibernate.orm:hibernate-community-dialects:6.6.5.Final")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.hibernate.orm:hibernate-community-dialects:6.4.1.Final")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.mockito")
+    }
+    testImplementation("io.mockk:mockk:1.13.9")
+    testRuntimeOnly("io.mockk:mockk-agent:1.13.9")
+    testImplementation("org.assertj:assertj-core:3.24.2")
 }
 
 tasks.withType<KotlinCompile> {
@@ -42,5 +47,5 @@ tasks.withType<Test> {
 }
 
 springBoot {
-    mainClass.set("com.langportal.LangPortalApplicationKt")
+    mainClass.set("com.langportal.LangPortalApplication")
 }
