@@ -6,21 +6,22 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/activities")
-class StudyActivityController(private val studyActivityService: StudyActivityService) {
-
+@RequestMapping("/activities")
+class StudyActivityController(
+    private val studyActivityService: StudyActivityService,
+) {
     @GetMapping
-    fun getAllActivities(): ResponseEntity<List<StudyActivity>> {
-        return ResponseEntity.ok(studyActivityService.getAllActivities())
-    }
+    fun getAllActivities(): ResponseEntity<List<StudyActivity>> = ResponseEntity.ok(studyActivityService.getAllActivities())
 
     @GetMapping("/{id}")
-    fun getActivityById(@PathVariable id: Long): ResponseEntity<StudyActivity> {
-        return ResponseEntity.ok(studyActivityService.getActivityById(id))
-    }
+    fun getActivityById(
+        @PathVariable id: Long,
+    ): ResponseEntity<StudyActivity> = ResponseEntity.ok(studyActivityService.getActivityById(id))
 
     @DeleteMapping("/{id}")
-    fun deleteActivity(@PathVariable id: Long): ResponseEntity<Unit> {
+    fun deleteActivity(
+        @PathVariable id: Long,
+    ): ResponseEntity<Unit> {
         studyActivityService.deleteActivity(id)
         return ResponseEntity.ok().build()
     }
