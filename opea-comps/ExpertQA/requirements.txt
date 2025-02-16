@@ -1,0 +1,7 @@
+opea-comps
+pydantic
+fastapi
+uvicorn
+numpy
+PyPDF2
+python-dotenv
