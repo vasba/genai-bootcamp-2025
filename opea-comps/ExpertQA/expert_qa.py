@@ -6,8 +6,9 @@ from comps.cores.proto.api_protocol import (
     ChatCompletionResponseChoice,
     ChatMessage,
     UsageInfo,
-    TranslationRequest
 )
+from fastapi import Request
+from pydantic import BaseModel
 import os
 
 # Service configuration
@@ -18,8 +19,6 @@ RETRIEVER_SERVICE_HOST_IP = os.getenv("RETRIEVER_SERVICE_HOST_IP", "0.0.0.0")
 RETRIEVER_SERVICE_PORT = int(os.getenv("RETRIEVER_SERVICE_PORT", 7000))
 LLM_SERVER_HOST_IP = os.getenv("LLM_SERVER_HOST_IP", "0.0.0.0")
 LLM_SERVER_PORT = int(os.getenv("LLM_SERVER_PORT", 80))
-TRANSLATION_SERVER_HOST_IP = os.getenv("TRANSLATION_SERVER_HOST_IP", "0.0.0.0")
-TRANSLATION_SERVER_PORT = int(os.getenv("TRANSLATION_SERVER_PORT", 80))
 
 class ExpertQAService:
     def __init__(self, host="0.0.0.0", port=8000):
@@ -29,16 +28,6 @@ class ExpertQAService:
         self.endpoint = "/v1/expert-qa"
 
     def setup_services(self):
-        # Initialize translation service
-        translation = MicroService(
-            name="translation",
-            host=TRANSLATION_SERVER_HOST_IP,
-            port=TRANSLATION_SERVER_PORT,
-            endpoint="/v1/translation",
-            use_remote_service=True,
-            service_type=ServiceType.TRANSLATION,
-        )
-
         # Initialize embedding service
         embedding = MicroService(
             name="embedding",
@@ -70,14 +59,10 @@ class ExpertQAService:
         )
 
         # Add services to orchestrator and define flow
-        self.megaservice.add(translation).add(embedding).add(retriever).add(llm)
+        self.megaservice.add(embedding).add(retriever).add(llm)
         
-        # If source is Romanian, translate to English first
-        self.megaservice.flow_to(translation, embedding, condition="source_lang=='ro'")
         self.megaservice.flow_to(embedding, retriever)
         self.megaservice.flow_to(retriever, llm)
-        # Translate answer back to Romanian if needed
-        self.megaservice.flow_to(llm, translation, condition="target_lang=='ro'")
 
     async def handle_request(self, request: Request):
         data = await request.json()
@@ -85,26 +70,48 @@ class ExpertQAService:
         target_lang = data.get("target_lang", "ro")
         
         chat_request = ChatCompletionRequest.parse_obj(data)
-        
-        # Build translation request if needed
+        text = chat_request.messages[-1].content
+
+        # If source language is Romanian, translate to English first using LLM
         if source_lang == "ro":
-            translation_request = TranslationRequest(
-                text=chat_request.messages[-1].content,
-                source_lang="ro",
-                target_lang="en"
+            translate_prompt = f"""
+            Translate this from Romanian to English:
+
+            Romanian:
+            {text}
+
+            English:
+            """
+            result_dict, _ = await self.megaservice.schedule(
+                initial_inputs={"query": translate_prompt}
             )
-            
+            last_node = list(result_dict.keys())[-1]
+            text = result_dict[last_node]["text"]
+
+        # Get response from LLM using translated text
         result_dict, runtime_graph = await self.megaservice.schedule(
-            initial_inputs={
-                "text": chat_request.messages[-1].content,
-                "source_lang": source_lang,
-                "target_lang": target_lang
-            }
+            initial_inputs={"text": text}
         )
         
-        # Get final response from last node
+        # Get final response
         last_node = runtime_graph.all_leaves()[-1]
         response = result_dict[last_node]["text"]
+
+        # If target language is Romanian, translate response back
+        if target_lang == "ro":
+            translate_prompt = f"""
+            Translate this from English to Romanian:
+
+            English:
+            {response}
+
+            Romanian:
+            """
+            result_dict, _ = await self.megaservice.schedule(
+                initial_inputs={"query": translate_prompt}
+            )
+            last_node = list(result_dict.keys())[-1]
+            response = result_dict[last_node]["text"]
         
         choices = []
         usage = UsageInfo()
