@@ -6,7 +6,10 @@ os.environ.update({
     "RETRIEVER_SERVICE_PORT": "7000",
     "RERANK_SERVICE_PORT": "8808",
     "LLM_SERVICE_PORT": "11434",
-    "LLM_MODEL": "llama3.2:1b"
+    "LLM_MODEL": "llama3.1:8b",
+    "TELEMETRY_ENDPOINT": "https://api.honeycomb.io/v1/traces",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
+    "OTEL_EXPORTER_OTLP_HEADERS": "" 
 })
 
 from expertqna import main

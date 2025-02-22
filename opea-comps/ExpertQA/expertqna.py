@@ -16,6 +16,7 @@ from comps.cores.proto.api_protocol import (
     UsageInfo,
 )
 from comps.cores.proto.docarray import LLMParams, RerankerParms, RetrieverParms
+from enum import Enum
 from fastapi import Request
 from fastapi.responses import StreamingResponse
 from langchain_core.prompts import PromptTemplate
@@ -63,6 +64,22 @@ def get_config():
     }
 
 
+class ServiceNames(Enum):
+    EMBEDDING = "embedding"
+    RETRIEVER = "retriever"
+    RERANK = "rerank"
+    LLM = "llm"
+    TRANSLATOR = "translator"
+
+def get_translation_prompt(content: str):
+    return f""" Translate this: {content}  to English, en. Return only the translation"""
+
+def get_contnet_for_service(inputs, service: MicroService):
+    if ServiceNames.TRANSLATOR.value in service.name:
+        return get_translation_prompt(inputs["text"])
+    elif service.service_type == ServiceType.LLM:
+        return inputs["inputs"]
+
 def align_inputs(self, inputs, cur_node, runtime_graph, llm_parameters_dict, **kwargs):
     if self.services[cur_node].service_type == ServiceType.EMBEDDING:
         inputs["inputs"] = inputs["text"]
@@ -77,10 +94,12 @@ def align_inputs(self, inputs, cur_node, runtime_graph, llm_parameters_dict, **k
         next_inputs = {}
         config = get_config()
         next_inputs["model"] = config["llm_model"]
-        next_inputs["messages"] = [{"role": "user", "content": inputs["inputs"]}]
+        next_inputs["messages"] = [{"role": "user", "content": get_contnet_for_service(inputs, self.services[cur_node])}]
         next_inputs["max_tokens"] = llm_parameters_dict["max_tokens"]
         next_inputs["top_p"] = llm_parameters_dict["top_p"]
         next_inputs["stream"] = inputs["stream"]
+        if ServiceNames.TRANSLATOR.value in self.services[cur_node].name:
+            next_inputs["stream"] = False
         next_inputs["frequency_penalty"] = inputs["frequency_penalty"]
         # next_inputs["presence_penalty"] = inputs["presence_penalty"]
         # next_inputs["repetition_penalty"] = inputs["repetition_penalty"]
@@ -240,14 +259,24 @@ class ExpertQnAService:
             use_remote_service=True,
             service_type=ServiceType.LLM,
         )
-        self.megaservice.add(embedding).add(retriever).add(rerank).add(llm)
+
+        translator = MicroService(
+            name=ServiceNames.TRANSLATOR.value,
+            host=config["llm_server_host_ip"],
+            port=config["llm_server_port"],
+            endpoint="/v1/chat/completions",
+            use_remote_service=True,
+            service_type=ServiceType.LLM,
+        )
+        self.megaservice.add(translator).add(embedding).add(retriever).add(rerank).add(llm)
+        self.megaservice.flow_to(translator, embedding)
         self.megaservice.flow_to(embedding, retriever)
         self.megaservice.flow_to(retriever, rerank)
         self.megaservice.flow_to(rerank, llm)
 
     async def handle_request(self, request: Request):
         data = await request.json()
-        stream_opt = data.get("stream", True)
+        stream_opt = data.get("stream", False)
         chat_request = ChatCompletionRequest.parse_obj(data)
         prompt = handle_message(chat_request.messages)
         parameters = LLMParams(
