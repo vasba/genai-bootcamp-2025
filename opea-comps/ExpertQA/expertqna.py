@@ -70,13 +70,16 @@ class ServiceNames(Enum):
     RERANK = "rerank"
     LLM = "llm"
     TRANSLATOR = "translator"
+    BACK_TRANSLATOR = "back_translation"
 
-def get_translation_prompt(content: str):
-    return f""" Translate this: {content}  to English, en. Return only the translation"""
+def get_translation_prompt(content: str, target_language: str):
+    return f""" Translate this: {content}  to language {target_language}. Return only the translation"""
 
-def get_contnet_for_service(inputs, service: MicroService):
-    if ServiceNames.TRANSLATOR.value in service.name:
-        return get_translation_prompt(inputs["text"])
+def get_content_for_llm(inputs, service: MicroService):
+    if ServiceNames.BACK_TRANSLATOR.value in service.name:
+        return get_translation_prompt(inputs["text"], inputs["language"])
+    elif ServiceNames.TRANSLATOR.value in service.name:
+        return get_translation_prompt(inputs["text"], "en")
     elif service.service_type == ServiceType.LLM:
         return inputs["inputs"]
 
@@ -94,7 +97,7 @@ def align_inputs(self, inputs, cur_node, runtime_graph, llm_parameters_dict, **k
         next_inputs = {}
         config = get_config()
         next_inputs["model"] = config["llm_model"]
-        next_inputs["messages"] = [{"role": "user", "content": get_contnet_for_service(inputs, self.services[cur_node])}]
+        next_inputs["messages"] = [{"role": "user", "content": get_content_for_llm(inputs, self.services[cur_node])}]
         next_inputs["max_tokens"] = llm_parameters_dict["max_tokens"]
         next_inputs["top_p"] = llm_parameters_dict["top_p"]
         next_inputs["stream"] = inputs["stream"]
@@ -268,27 +271,39 @@ class ExpertQnAService:
             use_remote_service=True,
             service_type=ServiceType.LLM,
         )
-        self.megaservice.add(translator).add(embedding).add(retriever).add(rerank).add(llm)
+
+        translator_back = MicroService(
+            name=ServiceNames.BACK_TRANSLATOR.value,
+            host=config["llm_server_host_ip"],
+            port=config["llm_server_port"],
+            endpoint="/v1/chat/completions",
+            use_remote_service=True,
+            service_type=ServiceType.LLM,
+        )
+        self.megaservice.add(translator).add(embedding).add(retriever).add(rerank).add(llm).add(translator_back)
         self.megaservice.flow_to(translator, embedding)
         self.megaservice.flow_to(embedding, retriever)
         self.megaservice.flow_to(retriever, rerank)
         self.megaservice.flow_to(rerank, llm)
+        self.megaservice.flow_to(llm, translator_back)
 
     async def handle_request(self, request: Request):
         data = await request.json()
         stream_opt = data.get("stream", False)
+        language = data.get("language", "en")
         chat_request = ChatCompletionRequest.parse_obj(data)
         prompt = handle_message(chat_request.messages)
         parameters = LLMParams(
             max_tokens=chat_request.max_tokens if chat_request.max_tokens else 1024,
             top_k=chat_request.top_k if chat_request.top_k else 10,
             top_p=chat_request.top_p if chat_request.top_p else 0.95,
-            temperature=chat_request.temperature if chat_request.temperature else 0.01,
+            temperature=chat_request.temperature if chat_request.temperature else 0,
             frequency_penalty=chat_request.frequency_penalty if chat_request.frequency_penalty else 0.0,
             presence_penalty=chat_request.presence_penalty if chat_request.presence_penalty else 0.0,
             repetition_penalty=chat_request.repetition_penalty if chat_request.repetition_penalty else 1.03,
             stream=stream_opt,
             chat_template=chat_request.chat_template if chat_request.chat_template else None,
+            language=language
         )
         retriever_parameters = RetrieverParms(
             search_type=chat_request.search_type if chat_request.search_type else "similarity",
