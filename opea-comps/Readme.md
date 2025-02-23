@@ -79,6 +79,7 @@ In order to use our expert mega service we need to start the services defined in
 
 First initialize needed environment variables, do not forget to add your HuggingFace token to [set_env.sh](ExpertQA/set_env.sh)
 ```
+cd ExpertQA
 source set_env.sh
 ```
 then
