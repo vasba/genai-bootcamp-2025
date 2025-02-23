@@ -79,7 +79,6 @@ kotlin {
 android {
     namespace = "com.langportal.app"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-
     defaultConfig {
         applicationId = "com.langportal.app"
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -110,7 +109,6 @@ dependencies {
 compose.desktop {
     application {
         mainClass = "com.langportal.app.MainKt"
-
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.langportal.app"
