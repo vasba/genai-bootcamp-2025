@@ -71,4 +71,9 @@ class StudySessionService(
         )
         return studySessionRepository.save(updatedSession)
     }
+
+    @Transactional(readOnly = true)
+    fun getLastStudySession(): StudySession? {
+        return studySessionRepository.findTopByOrderByStartTimeDesc()
+    }
 }

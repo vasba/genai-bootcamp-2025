@@ -285,4 +285,43 @@ class StudySessionControllerTest {
         verify { studySessionService.getStudySessionById(sessionId) }
         verify { modelMapper.toWordReviewItemDTO(reviewItem) }
     }
+
+    @Test
+    fun `getLastStudySession returns the latest session`() {
+        // given
+        val group = Group(id = 1L, name = "Test Group")
+        val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
+        val session1 = StudySession(
+            id = 1L,
+            group = group,
+            studyActivity = activity,
+            startTime = LocalDateTime.now().minusDays(1)
+        )
+        val session2 = StudySession(
+            id = 2L,
+            group = group,
+            studyActivity = activity,
+            startTime = LocalDateTime.now()
+        )
+        val sessionDTO = StudySessionDTO(
+            id = 2L,
+            groupId = 1L,
+            groupName = "Test Group",
+            activityId = 1L,
+            activityName = "Test Activity",
+            startTime = session2.startTime,
+            endTime = null,
+            reviewItemsCount = 0,
+            studyActivityId = 1L,
+            createdAt = LocalDateTime.now()
+        )
+        every { studySessionService.getLastStudySession() } returns session2
+        every { modelMapper.toStudySessionDTO(session2) } returns sessionDTO
+        // when
+        val response = studySessionController.getLastStudySession()
+        // then
+        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(response.body?.id).isEqualTo(2L)
+        verify { studySessionService.getLastStudySession() }
+    }
 }

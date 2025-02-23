@@ -86,4 +86,10 @@ class StudySessionController(
         val session = studySessionService.getStudySessionById(id)
         return ResponseEntity.ok(session.reviewItems.map { modelMapper.toWordReviewItemDTO(it) })
     }
+
+    @GetMapping("/last")
+    fun getLastStudySession(): ResponseEntity<StudySessionDTO?> {
+        val session = studySessionService.getLastStudySession()
+        return ResponseEntity.ok(session?.let { modelMapper.toStudySessionDTO(it) })
+    }
 }

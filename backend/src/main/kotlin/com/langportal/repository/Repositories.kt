@@ -22,6 +22,8 @@ interface StudySessionRepository : JpaRepository<StudySession, Long> {
         activityId: Long,
         pageable: Pageable,
     ): Page<StudySession>
+
+    fun findTopByOrderByStartTimeDesc(): StudySession?
 }
 
 interface StudyActivityRepository : JpaRepository<StudyActivity, Long>
