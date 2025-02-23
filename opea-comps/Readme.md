@@ -2,7 +2,7 @@
 
 Tried to use Github Copilot Agent with cloned OPEA GenAIExamples and based on them generated the code to fullfill the scenario in Readme.md.
 
-However it did not work well so I played with the examples to get a better picture of the OPEA and created the content manually usinc pieces from the examples.
+However it did not work well so I played with the examples to get a better picture of the OPEA and created the content manually using pieces from the examples.
 
 # Use Case
 
