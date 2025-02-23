@@ -9,8 +9,9 @@ Web can be started locally with: ./gradlew wasmJsBrowserDevelopmentRun
    - Set up theme support with dark mode toggle
 
 ## Phase 2: Dashboard and Basic Components
-1. Implement Dashboard page (/dashboard)
-   - Create layout for last session summary
+1. Implement Dashboard page (/dashboard) with connection to backend api from backend folder
+   - Extract the screens in separate files in appropriate folder
+   - Create layout for last session summary 
    - Implement student progression display
    - Make it the default route
 
