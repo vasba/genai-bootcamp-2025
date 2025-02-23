@@ -1,3 +1,9 @@
+# Introduction
+
+Tried to use Github Copilot Agent with cloned OPEA GenAIExamples and based on them generated the code to fullfill the scenario in Readme.md.
+
+However it did not work well so I played with the examples to get a better picture of the OPEA and created the content manually usinc pieces from the examples.
+
 # Use Case
 
 Imagine this is an app used by an English speaking domain expert to communicate with a Romanian that does not know English or viceversa. The Expert is asked a question in Romanian and he/she will use RAG to answer the question and translation service to reply in Romanian. 

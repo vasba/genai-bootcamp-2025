@@ -1,1 +1,0 @@
-Github Copilot Agent cloned OPEA GenAIExamples and based on them generated the code to fullfill the scenario in Readme.md.
