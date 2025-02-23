@@ -1,9 +1,9 @@
 # Frontend Implementation Prompts
 
+Web can be started locally with: ./gradlew wasmJsBrowserDevelopmentRun
+
 ## Phase 1: Project Setup and Navigation
-1. Set up a new Kotlin Multiplatform project with Compose for Web, Android, and iOS
-   - Initialize project structure
-   - Configure build files
+1. Use the boilerplate in frontend/LangPortal to:
    - Set up navigation framework
    - Implement the global navigation bar
    - Set up theme support with dark mode toggle
