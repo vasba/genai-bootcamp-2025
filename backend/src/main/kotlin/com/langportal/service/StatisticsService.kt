@@ -12,8 +12,7 @@ data class ReviewStatistics(
 
 @Service
 class StatisticsService(
-    private val wordReviewItemRepository: WordReviewItemRepository,
-    private val studySessionService: StudySessionService,
+    private val wordReviewItemRepository: WordReviewItemRepository
 ) {
     @Transactional(readOnly = true)
     fun getSessionStatistics(sessionId: Long): ReviewStatistics {
@@ -33,6 +32,21 @@ class StatisticsService(
     @Transactional(readOnly = true)
     fun getGroupStatistics(groupId: Long): ReviewStatistics {
         val allReviews = wordReviewItemRepository.findByWordGroupId(groupId)
+        val totalReviews = allReviews.size
+        val correctReviews = allReviews.count { it.correct }
+        val accuracy =
+            if (totalReviews > 0) {
+                correctReviews.toDouble() / totalReviews
+            } else {
+                0.0
+            }
+
+        return ReviewStatistics(totalReviews, correctReviews, accuracy)
+    }
+
+    @Transactional(readOnly = true)
+    fun getWordStatistics(): ReviewStatistics {
+        val allReviews = wordReviewItemRepository.findAll()
         val totalReviews = allReviews.size
         val correctReviews = allReviews.count { it.correct }
         val accuracy =

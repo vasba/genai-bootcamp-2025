@@ -24,6 +24,7 @@ You have been tasked with creating the backend API of the application.
 * GET /groups/:id - Get words from a specific group (This is intended to be used by target apps)
 * POST /study_sessions - Create a new study session for a group
 * POST /study_sessions/:id/review - Log a review attempt for a word during a study session
+* GET /statistics/words - get words statistics for all sessions
 
 ### GET /words
 * page: Page number (default: 1)
@@ -41,6 +42,11 @@ You have been tasked with creating the backend API of the application.
 
 
 POST /study_sessions/:id/review
+
+### GET /statistics/words
+* totalReviews
+* correctReviews
+* accuracy
 
 ## Database Schema 
 

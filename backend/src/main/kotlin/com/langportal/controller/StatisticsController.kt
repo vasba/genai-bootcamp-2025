@@ -28,4 +28,10 @@ class StatisticsController(private val statisticsService: StatisticsService) {
             ResponseEntity.notFound().build()
         }
     }
+
+    @GetMapping("/words")
+    fun getWordStatistics(): ResponseEntity<ReviewStatistics> {
+        val stats = statisticsService.getWordStatistics()
+        return ResponseEntity.ok(stats)
+    }
 }
