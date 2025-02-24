@@ -55,6 +55,7 @@ class StudySessionControllerTest {
             studyActivityId = 1L,
             createdAt = LocalDateTime.now()
         )
+
         every { studySessionService.createStudySession(1L, 1L) } returns session
         every { modelMapper.toStudySessionDTO(session) } returns sessionDTO
 
@@ -63,7 +64,6 @@ class StudySessionControllerTest {
 
         // then
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.body?.data).isNotNull
         assertThat(response.body?.data?.id).isEqualTo(1L)
         verify { studySessionService.createStudySession(1L, 1L) }
     }
@@ -72,37 +72,40 @@ class StudySessionControllerTest {
     fun `addReview creates new review`() {
         // given
         val sessionId = 1L
-        val group = Group(id = 1L, name = "Test Group")
-        val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
+        val wordId = 1L
+        val wordDTO = WordDTO(id = wordId, sourceWord = "test", targetWord = "test")
+        val reviewDTO = WordReviewItemDTO(
+            id = 1L,  // Changed from null to 1L
+            word = wordDTO,
+            correct = true,
+            timestamp = LocalDateTime.now()
+        )
+
+        val word = Word(id = wordId, sourceWord = "test", targetWord = "test")
         val session = StudySession(
             id = sessionId,
-            group = group,
-            studyActivity = activity,
+            group = Group(id = 1L, name = "Test Group"),
+            studyActivity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url"),
             startTime = LocalDateTime.now()
         )
-        val word = Word(id = 1L, sourceWord = "test", targetWord = "test")
-        val review = WordReviewItemDTO(
+
+        val savedReview = WordReviewItem(
             id = 1L,
-            word = WordDTO(id = 1L, sourceWord = "test", targetWord = "test"),
-            correct = true,
-            timestamp = LocalDateTime.now()
-        )
-        val reviewItem = WordReviewItem(
-            id = 1L,
-            studySession = session,
             word = word,
+            studySession = session,
             correct = true,
             timestamp = LocalDateTime.now()
         )
-        every { wordReviewService.createWordReview(sessionId, 1L, true) } returns reviewItem
+
+        every { wordReviewService.createWordReview(sessionId, wordId, true) } returns savedReview
 
         // when
-        val response = studySessionController.addReview(sessionId, review)
+        val response = studySessionController.addReview(sessionId, reviewDTO)
 
         // then
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body?.data).isTrue()
-        verify { wordReviewService.createWordReview(sessionId, 1L, true) }
+        verify { wordReviewService.createWordReview(sessionId, wordId, true) }
     }
 
     @Test

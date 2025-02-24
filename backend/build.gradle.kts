@@ -46,6 +46,10 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.withType<ProcessResources> {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 springBoot {
     mainClass.set("com.langportal.LangPortalApplication")
 }

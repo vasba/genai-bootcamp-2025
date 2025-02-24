@@ -15,13 +15,13 @@ data class StudySession(
     val group: Group,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "activity_id", nullable = false)
+    @JoinColumn(name = "study_activity_id", nullable = false)
     val studyActivity: StudyActivity,
 
-    @Column(nullable = false)
+    @Column(name = "start_time", nullable = false)
     val startTime: LocalDateTime,
 
-    @Column
+    @Column(name = "end_time")
     val endTime: LocalDateTime? = null,
 
     @OneToMany(mappedBy = "studySession", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)

@@ -16,14 +16,14 @@ data class Group(
     @Column
     var description: String? = null,
 
+    @Column(name = "words_count")
+    var wordsCount: Int = 0,
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "word_groups",  // Changed from group_words to word_groups to match the schema
+        name = "word_groups",
         joinColumns = [JoinColumn(name = "group_id")],
         inverseJoinColumns = [JoinColumn(name = "word_id")]
     )
-    var words: MutableList<Word> = mutableListOf(),
-
-    @Transient
-    var wordsCount: Int = 0
+    var words: MutableList<Word> = mutableListOf()
 )

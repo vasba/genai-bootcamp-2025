@@ -21,6 +21,6 @@ data class WordReviewItem(
     @Column(nullable = false)
     val correct: Boolean,
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     val timestamp: LocalDateTime = LocalDateTime.now()
 )

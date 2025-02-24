@@ -1,8 +1,10 @@
 package com.langportal.service
 
+import com.langportal.repository.GroupRepository
 import com.langportal.repository.WordReviewItemRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.NoSuchElementException
 
 data class ReviewStatistics(
     val totalReviews: Int,
@@ -12,11 +14,15 @@ data class ReviewStatistics(
 
 @Service
 class StatisticsService(
-    private val wordReviewItemRepository: WordReviewItemRepository
+    private val wordReviewItemRepository: WordReviewItemRepository,
+    private val groupRepository: GroupRepository
 ) {
     @Transactional(readOnly = true)
     fun getSessionStatistics(sessionId: Long): ReviewStatistics {
         val allReviews = wordReviewItemRepository.findByStudySessionId(sessionId)
+        if (allReviews.isEmpty()) {
+            throw NoSuchElementException("Session not found with id: $sessionId")
+        }
         val totalReviews = allReviews.size
         val correctReviews = allReviews.count { it.correct }
         val accuracy =
@@ -31,6 +37,9 @@ class StatisticsService(
 
     @Transactional(readOnly = true)
     fun getGroupStatistics(groupId: Long): ReviewStatistics {
+        if (!groupRepository.existsById(groupId)) {
+            throw NoSuchElementException("Group not found with id: $groupId")
+        }
         val allReviews = wordReviewItemRepository.findByWordGroupId(groupId)
         val totalReviews = allReviews.size
         val correctReviews = allReviews.count { it.correct }

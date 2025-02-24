@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 class ModelMapper {
     fun toWordDTO(word: Word): WordDTO {
         return WordDTO(
-            id = word.id!!, // Ensure id is non-nullable
+            id = word.id!!,
             sourceWord = word.sourceWord,
             targetWord = word.targetWord,
             groups = word.groups?.map { toGroupWithoutWords(it) } ?: emptyList()

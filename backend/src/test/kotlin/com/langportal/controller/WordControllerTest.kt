@@ -38,7 +38,7 @@ class WordControllerTest {
         every { modelMapper.toWordDTO(word) } returns wordDTO
 
         // Act
-        val result = wordController.getWords(page, "sourceWord", "asc")
+        val result = wordController.getWords(page, "romanian", "asc")
 
         // Assert
         assertThat(result.statusCode.is2xxSuccessful).isTrue()
