@@ -8,6 +8,7 @@ import com.langportal.service.GroupService
 import com.langportal.service.StatisticsService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.NoSuchElementException
 
 @RestController
 @RequestMapping("/groups")
@@ -59,13 +60,17 @@ class GroupController(
     fun getGroupStatistics(
         @PathVariable id: Long,
     ): ResponseEntity<ReviewStatsDTO> {
-        val stats = statisticsService.getGroupStatistics(id)
-        return ResponseEntity.ok(
-            ReviewStatsDTO(
-                totalReviews = stats.totalReviews,
-                correctReviews = stats.correctReviews,
-                accuracy = stats.accuracy,
-            ),
-        )
+        return try {
+            val stats = statisticsService.getGroupStatistics(id)
+            ResponseEntity.ok(
+                ReviewStatsDTO(
+                    totalReviews = stats.totalReviews,
+                    correctReviews = stats.correctReviews,
+                    accuracy = stats.accuracy,
+                ),
+            )
+        } catch (e: NoSuchElementException) {
+            ResponseEntity.notFound().build()
+        }
     }
 }
