@@ -18,9 +18,9 @@ INSERT or IGNORE INTO word_groups (word_id, group_id) VALUES
 (1, 1), (2, 1), (3, 1), (4, 1), (5, 1),
 (2, 2), (3, 2), (4, 2), (5, 2);
 
-INSERT INTO study_sessions (group_id, study_activity_id, created_at) VALUES
-(1, 1, '2023-01-01 10:00:00'),
-(2, 2, '2023-01-02 11:00:00');
+INSERT INTO study_sessions (group_id, study_activity_id) VALUES
+(1, 1),
+(2, 2);
 
 INSERT INTO word_review_items (word_id, study_session_id, correct, created_at) VALUES
 (1, 1, 1, '2023-01-01 10:05:00'),
