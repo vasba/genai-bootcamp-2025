@@ -84,7 +84,9 @@ class StudySessionController(
         @PathVariable id: Long,
     ): ResponseEntity<List<WordReviewItemDTO>> {
         val session = studySessionService.getStudySessionById(id)
-        return ResponseEntity.ok(session.reviewItems.map { modelMapper.toWordReviewItemDTO(it) })
+        return ResponseEntity.ok(
+            session.reviewItems.map { modelMapper.toWordReviewItemDTO(it) },
+        )
     }
 
     @GetMapping("/last")

@@ -1,7 +1,6 @@
 package com.langportal.controller
 
 import com.langportal.dto.*
-import com.langportal.dto.response.ApiResponse
 import com.langportal.mapper.ModelMapper
 import com.langportal.model.*
 import com.langportal.service.StudySessionService
@@ -37,24 +36,26 @@ class StudySessionControllerTest {
         val request = StudySessionController.CreateSessionRequest(groupId = 1L, studyActivityId = 1L)
         val group = Group(id = 1L, name = "Test Group")
         val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
-        val session = StudySession(
-            id = 1L,
-            group = group,
-            studyActivity = activity,
-            startTime = LocalDateTime.now()
-        )
-        val sessionDTO = StudySessionDTO(
-            id = 1L,
-            groupId = 1L,
-            groupName = "Test Group",
-            activityId = 1L,
-            activityName = "Test Activity",
-            startTime = LocalDateTime.now(),
-            endTime = null,
-            reviewItemsCount = 0,
-            studyActivityId = 1L,
-            createdAt = LocalDateTime.now()
-        )
+        val session =
+            StudySession(
+                id = 1L,
+                group = group,
+                studyActivity = activity,
+                startTime = LocalDateTime.now(),
+            )
+        val sessionDTO =
+            StudySessionDTO(
+                id = 1L,
+                groupId = 1L,
+                groupName = "Test Group",
+                activityId = 1L,
+                activityName = "Test Activity",
+                startTime = LocalDateTime.now(),
+                endTime = null,
+                reviewItemsCount = 0,
+                studyActivityId = 1L,
+                createdAt = LocalDateTime.now(),
+            )
 
         every { studySessionService.createStudySession(1L, 1L) } returns session
         every { modelMapper.toStudySessionDTO(session) } returns sessionDTO
@@ -74,28 +75,31 @@ class StudySessionControllerTest {
         val sessionId = 1L
         val wordId = 1L
         val wordDTO = WordDTO(id = wordId, sourceWord = "test", targetWord = "test")
-        val reviewDTO = WordReviewItemDTO(
-            id = 1L,  // Changed from null to 1L
-            word = wordDTO,
-            correct = true,
-            timestamp = LocalDateTime.now()
-        )
+        val reviewDTO =
+            WordReviewItemDTO(
+                id = 1L, // Changed from null to 1L
+                word = wordDTO,
+                correct = true,
+                timestamp = LocalDateTime.now(),
+            )
 
         val word = Word(id = wordId, sourceWord = "test", targetWord = "test")
-        val session = StudySession(
-            id = sessionId,
-            group = Group(id = 1L, name = "Test Group"),
-            studyActivity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url"),
-            startTime = LocalDateTime.now()
-        )
+        val session =
+            StudySession(
+                id = sessionId,
+                group = Group(id = 1L, name = "Test Group"),
+                studyActivity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url"),
+                startTime = LocalDateTime.now(),
+            )
 
-        val savedReview = WordReviewItem(
-            id = 1L,
-            word = word,
-            studySession = session,
-            correct = true,
-            timestamp = LocalDateTime.now()
-        )
+        val savedReview =
+            WordReviewItem(
+                id = 1L,
+                word = word,
+                studySession = session,
+                correct = true,
+                timestamp = LocalDateTime.now(),
+            )
 
         every { wordReviewService.createWordReview(sessionId, wordId, true) } returns savedReview
 
@@ -114,26 +118,29 @@ class StudySessionControllerTest {
         val sessionId = 1L
         val group = Group(id = 1L, name = "Test Group")
         val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
-        val session = StudySession(
-            id = sessionId,
-            group = group,
-            studyActivity = activity,
-            startTime = LocalDateTime.now()
-        )
+        val session =
+            StudySession(
+                id = sessionId,
+                group = group,
+                studyActivity = activity,
+                startTime = LocalDateTime.now(),
+            )
         val word = Word(id = 1L, sourceWord = "test", targetWord = "test")
-        val wordReviewItem = WordReviewItem(
-            id = 1L,
-            studySession = session,
-            word = word,
-            correct = true,
-            timestamp = LocalDateTime.now()
-        )
-        val reviewItemDTO = WordReviewItemDTO(
-            id = 1L,
-            word = WordDTO(id = 1L, sourceWord = "test", targetWord = "test"),
-            correct = true,
-            timestamp = LocalDateTime.now()
-        )
+        val wordReviewItem =
+            WordReviewItem(
+                id = 1L,
+                studySession = session,
+                word = word,
+                correct = true,
+                timestamp = LocalDateTime.now(),
+            )
+        val reviewItemDTO =
+            WordReviewItemDTO(
+                id = 1L,
+                word = WordDTO(id = 1L, sourceWord = "test", targetWord = "test"),
+                correct = true,
+                timestamp = LocalDateTime.now(),
+            )
         every { wordReviewService.getSessionReviews(sessionId) } returns listOf(wordReviewItem)
         every { modelMapper.toWordReviewItemDTO(wordReviewItem) } returns reviewItemDTO
 
@@ -153,24 +160,26 @@ class StudySessionControllerTest {
         val pageable = PageRequest.of(0, 10)
         val group = Group(id = 1L, name = "Test Group")
         val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
-        val session = StudySession(
-            id = 1L,
-            group = group,
-            studyActivity = activity,
-            startTime = LocalDateTime.now()
-        )
-        val sessionDTO = StudySessionDTO(
-            id = 1L,
-            groupId = 1L,
-            groupName = "Test Group",
-            activityId = 1L,
-            activityName = "Test Activity",
-            startTime = LocalDateTime.now(),
-            endTime = null,
-            reviewItemsCount = 0,
-            studyActivityId = 1L,
-            createdAt = LocalDateTime.now()
-        )
+        val session =
+            StudySession(
+                id = 1L,
+                group = group,
+                studyActivity = activity,
+                startTime = LocalDateTime.now(),
+            )
+        val sessionDTO =
+            StudySessionDTO(
+                id = 1L,
+                groupId = 1L,
+                groupName = "Test Group",
+                activityId = 1L,
+                activityName = "Test Activity",
+                startTime = LocalDateTime.now(),
+                endTime = null,
+                reviewItemsCount = 0,
+                studyActivityId = 1L,
+                createdAt = LocalDateTime.now(),
+            )
         val page = PageImpl(listOf(session))
         every { studySessionService.getStudySessionsByActivity(activityId, pageable) } returns page
         every { modelMapper.toStudySessionDTO(session) } returns sessionDTO
@@ -191,24 +200,26 @@ class StudySessionControllerTest {
         val sessionId = 1L
         val group = Group(id = 1L, name = "Test Group")
         val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
-        val session = StudySession(
-            id = sessionId,
-            group = group,
-            studyActivity = activity,
-            startTime = LocalDateTime.now()
-        )
-        val sessionDTO = StudySessionDTO(
-            id = sessionId,
-            groupId = 1L,
-            groupName = "Test Group",
-            activityId = 1L,
-            activityName = "Test Activity",
-            startTime = LocalDateTime.now(),
-            endTime = null,
-            reviewItemsCount = 0,
-            studyActivityId = 1L,
-            createdAt = LocalDateTime.now()
-        )
+        val session =
+            StudySession(
+                id = sessionId,
+                group = group,
+                studyActivity = activity,
+                startTime = LocalDateTime.now(),
+            )
+        val sessionDTO =
+            StudySessionDTO(
+                id = sessionId,
+                groupId = 1L,
+                groupName = "Test Group",
+                activityId = 1L,
+                activityName = "Test Activity",
+                startTime = LocalDateTime.now(),
+                endTime = null,
+                reviewItemsCount = 0,
+                studyActivityId = 1L,
+                createdAt = LocalDateTime.now(),
+            )
         every { studySessionService.getStudySessionById(sessionId) } returns session
         every { modelMapper.toStudySessionDTO(session) } returns sessionDTO
 
@@ -229,26 +240,28 @@ class StudySessionControllerTest {
         val endTime = LocalDateTime.now()
         val group = Group(id = 1L, name = "Test Group")
         val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
-        val session = StudySession(
-            id = sessionId,
-            group = group,
-            studyActivity = activity,
-            startTime = LocalDateTime.now(),
-            endTime = endTime
-        )
+        val session =
+            StudySession(
+                id = sessionId,
+                group = group,
+                studyActivity = activity,
+                startTime = LocalDateTime.now(),
+                endTime = endTime,
+            )
         val updatedSession = session.copy()
-        val sessionDTO = StudySessionDTO(
-            id = sessionId,
-            groupId = 1L,
-            groupName = "Test Group",
-            activityId = 1L,
-            activityName = "Test Activity",
-            startTime = LocalDateTime.now(),
-            endTime = endTime,
-            reviewItemsCount = 0,
-            studyActivityId = 1L,
-            createdAt = LocalDateTime.now()
-        )
+        val sessionDTO =
+            StudySessionDTO(
+                id = sessionId,
+                groupId = 1L,
+                groupName = "Test Group",
+                activityId = 1L,
+                activityName = "Test Activity",
+                startTime = LocalDateTime.now(),
+                endTime = endTime,
+                reviewItemsCount = 0,
+                studyActivityId = 1L,
+                createdAt = LocalDateTime.now(),
+            )
         every { studySessionService.updateStudySession(sessionId, endTime) } returns updatedSession
         every { modelMapper.toStudySessionDTO(updatedSession) } returns sessionDTO
 
@@ -268,12 +281,13 @@ class StudySessionControllerTest {
         val sessionId = 1L
         val session = mockk<StudySession>(relaxed = true)
         val reviewItem = mockk<WordReviewItem>(relaxed = true)
-        val reviewItemDTO = WordReviewItemDTO(
-            id = 1L,
-            word = WordDTO(id = 1L, sourceWord = "test", targetWord = "test"),
-            correct = true,
-            timestamp = LocalDateTime.now()
-        )
+        val reviewItemDTO =
+            WordReviewItemDTO(
+                id = 1L,
+                word = WordDTO(id = 1L, sourceWord = "test", targetWord = "test"),
+                correct = true,
+                timestamp = LocalDateTime.now(),
+            )
         every { session.reviewItems } returns mutableListOf(reviewItem)
         every { studySessionService.getStudySessionById(sessionId) } returns session
         every { modelMapper.toWordReviewItemDTO(reviewItem) } returns reviewItemDTO
@@ -294,30 +308,33 @@ class StudySessionControllerTest {
         // given
         val group = Group(id = 1L, name = "Test Group")
         val activity = StudyActivity(id = 1L, name = "Test Activity", url = "test-url")
-        val session1 = StudySession(
-            id = 1L,
-            group = group,
-            studyActivity = activity,
-            startTime = LocalDateTime.now().minusDays(1)
-        )
-        val session2 = StudySession(
-            id = 2L,
-            group = group,
-            studyActivity = activity,
-            startTime = LocalDateTime.now()
-        )
-        val sessionDTO = StudySessionDTO(
-            id = 2L,
-            groupId = 1L,
-            groupName = "Test Group",
-            activityId = 1L,
-            activityName = "Test Activity",
-            startTime = session2.startTime,
-            endTime = null,
-            reviewItemsCount = 0,
-            studyActivityId = 1L,
-            createdAt = LocalDateTime.now()
-        )
+        val session1 =
+            StudySession(
+                id = 1L,
+                group = group,
+                studyActivity = activity,
+                startTime = LocalDateTime.now().minusDays(1),
+            )
+        val session2 =
+            StudySession(
+                id = 2L,
+                group = group,
+                studyActivity = activity,
+                startTime = LocalDateTime.now(),
+            )
+        val sessionDTO =
+            StudySessionDTO(
+                id = 2L,
+                groupId = 1L,
+                groupName = "Test Group",
+                activityId = 1L,
+                activityName = "Test Activity",
+                startTime = session2.startTime,
+                endTime = null,
+                reviewItemsCount = 0,
+                studyActivityId = 1L,
+                createdAt = LocalDateTime.now(),
+            )
         every { studySessionService.getLastStudySession() } returns session2
         every { modelMapper.toStudySessionDTO(session2) } returns sessionDTO
         // when
