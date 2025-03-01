@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -81,7 +79,7 @@ fun App() {
                             backgroundColor = MaterialTheme.colors.surface
                         ) {
                             BottomNavigationItem(
-                                icon = { Icon(Icons.Default.Menu, "Dashboard") },
+                                icon = { Icon(Icons.Default.Dashboard, "Dashboard") },
                                 label = { Text("Dashboard") },
                                 selected = currentRoute == "/dashboard",
                                 onClick = { currentRoute = "/dashboard" },
@@ -89,7 +87,7 @@ fun App() {
                                 unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
                             )
                             BottomNavigationItem(
-                                icon = { Icon(Icons.Default.Menu, "Study") },
+                                icon = { Icon(Icons.Default.School, "Study") },
                                 label = { Text("Study") },
                                 selected = currentRoute == "/study-activities",
                                 onClick = { currentRoute = "/study-activities" },
@@ -97,7 +95,7 @@ fun App() {
                                 unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
                             )
                             BottomNavigationItem(
-                                icon = { Icon(Icons.Default.Menu, "Words") },
+                                icon = { Icon(Icons.Default.Translate, "Words") },
                                 label = { Text("Words") },
                                 selected = currentRoute == "/words",
                                 onClick = { currentRoute = "/words" },
@@ -105,7 +103,7 @@ fun App() {
                                 unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
                             )
                             BottomNavigationItem(
-                                icon = { Icon(Icons.Default.Menu, "Groups") },
+                                icon = { Icon(Icons.Default.Category, "Groups") },
                                 label = { Text("Groups") },
                                 selected = currentRoute == "/groups",
                                 onClick = { currentRoute = "/groups" },
@@ -113,7 +111,7 @@ fun App() {
                                 unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
                             )
                             BottomNavigationItem(
-                                icon = { Icon(Icons.Default.Menu, "Sessions") },
+                                icon = { Icon(Icons.Default.Timeline, "Sessions") },
                                 label = { Text("Sessions") },
                                 selected = currentRoute == "/sessions",
                                 onClick = { currentRoute = "/sessions" },
@@ -121,7 +119,7 @@ fun App() {
                                 unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
                             )
                             BottomNavigationItem(
-                                icon = { Icon(Icons.Default.Menu, "Settings") },
+                                icon = { Icon(Icons.Default.Settings, "Settings") },
                                 label = { Text("Settings") },
                                 selected = currentRoute == "/settings",
                                 onClick = { currentRoute = "/settings" },
@@ -193,18 +191,55 @@ private fun AppNavigationBar(
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        NavButton("Dashboard", "/dashboard", currentRoute, onRouteSelected)
-        NavButton("Study Activities", "/study-activities", currentRoute, onRouteSelected)
-        NavButton("Words", "/words", currentRoute, onRouteSelected)
-        NavButton("Word Groups", "/groups", currentRoute, onRouteSelected)
-        NavButton("Sessions", "/sessions", currentRoute, onRouteSelected)
-        NavButton("Settings", "/settings", currentRoute, onRouteSelected)
+        NavButton(
+            text = "Dashboard",
+            icon = Icons.Default.Dashboard,
+            route = "/dashboard",
+            currentRoute = currentRoute,
+            onRouteSelected = onRouteSelected
+        )
+        NavButton(
+            text = "Study Activities",
+            icon = Icons.Default.School,
+            route = "/study-activities",
+            currentRoute = currentRoute,
+            onRouteSelected = onRouteSelected
+        )
+        NavButton(
+            text = "Words",
+            icon = Icons.Default.Translate,
+            route = "/words",
+            currentRoute = currentRoute,
+            onRouteSelected = onRouteSelected
+        )
+        NavButton(
+            text = "Word Groups",
+            icon = Icons.Default.Category,
+            route = "/groups",
+            currentRoute = currentRoute,
+            onRouteSelected = onRouteSelected
+        )
+        NavButton(
+            text = "Sessions",
+            icon = Icons.Default.Timeline,
+            route = "/sessions",
+            currentRoute = currentRoute,
+            onRouteSelected = onRouteSelected
+        )
+        NavButton(
+            text = "Settings",
+            icon = Icons.Default.Settings,
+            route = "/settings",
+            currentRoute = currentRoute,
+            onRouteSelected = onRouteSelected
+        )
     }
 }
 
 @Composable
 private fun NavButton(
     text: String,
+    icon: ImageVector,
     route: String,
     currentRoute: String,
     onRouteSelected: (String) -> Unit
@@ -222,7 +257,7 @@ private fun NavButton(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Default.Menu, contentDescription = text)
+            Icon(icon, contentDescription = text)
             Text(text)
         }
     }
