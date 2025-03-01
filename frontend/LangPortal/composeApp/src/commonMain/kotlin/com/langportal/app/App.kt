@@ -1,12 +1,15 @@
 package com.langportal.app
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.langportal.app.screens.*
@@ -20,6 +23,9 @@ fun App() {
         var currentRoute by remember { mutableStateOf("/dashboard") }
         val viewModel = remember { DashboardViewModel() }
         
+        // Use window width to determine layout
+        var isCompactScreen by remember { mutableStateOf(true) }
+        
         MaterialTheme(
             colors = if (darkMode) darkColors() else lightColors()
         ) {
@@ -27,46 +33,135 @@ fun App() {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colors.background
             ) {
-                Column {
-                    // Top navigation bar
-                    TopAppBar(
-                        title = { Text("LangPortal") },
-                        actions = {
-                            // Dark mode toggle
-                            IconButton(onClick = { darkMode = !darkMode }) {
-                                Icon(
-                                    imageVector = if (darkMode) Icons.Default.Add else Icons.Default.Close,
-                                    contentDescription = if (darkMode) "Switch to light mode" else "Switch to dark mode"
-                                )
+                if (isCompactScreen) {
+                    // Vertical layout for small screens
+                    Column {
+                        TopAppBar(
+                            title = { Text("LangPortal") },
+                            actions = {
+                                IconButton(onClick = { darkMode = !darkMode }) {
+                                    Text(if (darkMode) "☀️" else "🌙")
+                                }
+                            }
+                        )
+
+                        // Content area
+                        Box(modifier = Modifier.weight(1f)) {
+                            when (currentRoute) {
+                                "/dashboard" -> DashboardScreen(viewModel = viewModel)
+                                "/study-activities" -> StudyActivitiesScreen()
+                                "/words" -> WordsScreen()
+                                "/groups" -> GroupsScreen()
+                                "/sessions" -> SessionsScreen()
+                                "/settings" -> SettingsScreen()
+                                else -> {
+                                    if (currentRoute.startsWith("/study-activities/")) {
+                                        val id = currentRoute.substringAfterLast("/")
+                                        StudyActivityDetailScreen(id)
+                                    } else if (currentRoute.startsWith("/words/")) {
+                                        val id = currentRoute.substringAfterLast("/")
+                                        WordDetailScreen(id)
+                                    } else if (currentRoute.startsWith("/groups/")) {
+                                        val id = currentRoute.substringAfterLast("/")
+                                        GroupDetailScreen(id)
+                                    }
+                                }
                             }
                         }
-                    )
 
-                    // Navigation bar
-                    AppNavigationBar(
-                        currentRoute = currentRoute,
-                        onRouteSelected = { currentRoute = it }
-                    )
+                        // Bottom navigation for small screens
+                        BottomNavigation(
+                            modifier = Modifier.fillMaxWidth(),
+                            backgroundColor = MaterialTheme.colors.surface
+                        ) {
+                            BottomNavigationItem(
+                                icon = { Icon(Icons.Default.Menu, "Dashboard") },
+                                label = { Text("Dashboard") },
+                                selected = currentRoute == "/dashboard",
+                                onClick = { currentRoute = "/dashboard" },
+                                selectedContentColor = MaterialTheme.colors.primary,
+                                unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                            )
+                            BottomNavigationItem(
+                                icon = { Icon(Icons.Default.Menu, "Study") },
+                                label = { Text("Study") },
+                                selected = currentRoute == "/study-activities",
+                                onClick = { currentRoute = "/study-activities" },
+                                selectedContentColor = MaterialTheme.colors.primary,
+                                unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                            )
+                            BottomNavigationItem(
+                                icon = { Icon(Icons.Default.Menu, "Words") },
+                                label = { Text("Words") },
+                                selected = currentRoute == "/words",
+                                onClick = { currentRoute = "/words" },
+                                selectedContentColor = MaterialTheme.colors.primary,
+                                unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                            )
+                            BottomNavigationItem(
+                                icon = { Icon(Icons.Default.Menu, "Groups") },
+                                label = { Text("Groups") },
+                                selected = currentRoute == "/groups",
+                                onClick = { currentRoute = "/groups" },
+                                selectedContentColor = MaterialTheme.colors.primary,
+                                unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                            )
+                            BottomNavigationItem(
+                                icon = { Icon(Icons.Default.Menu, "Sessions") },
+                                label = { Text("Sessions") },
+                                selected = currentRoute == "/sessions",
+                                onClick = { currentRoute = "/sessions" },
+                                selectedContentColor = MaterialTheme.colors.primary,
+                                unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                            )
+                            BottomNavigationItem(
+                                icon = { Icon(Icons.Default.Menu, "Settings") },
+                                label = { Text("Settings") },
+                                selected = currentRoute == "/settings",
+                                onClick = { currentRoute = "/settings" },
+                                selectedContentColor = MaterialTheme.colors.primary,
+                                unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+                            )
+                        }
+                    }
+                } else {
+                    // Horizontal layout for larger screens
+                    Column {
+                        TopAppBar(
+                            title = { Text("LangPortal") },
+                            actions = {
+                                IconButton(onClick = { darkMode = !darkMode }) {
+                                    Text(if (darkMode) "☀️" else "🌙")
+                                }
+                            }
+                        )
 
-                    // Content area
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        when (currentRoute) {
-                            "/dashboard" -> DashboardScreen(viewModel = viewModel)
-                            "/study-activities" -> StudyActivitiesScreen()
-                            "/words" -> WordsScreen()
-                            "/groups" -> GroupsScreen()
-                            "/sessions" -> SessionsScreen()
-                            "/settings" -> SettingsScreen()
-                            else -> {
-                                if (currentRoute.startsWith("/study-activities/")) {
-                                    val id = currentRoute.substringAfterLast("/")
-                                    StudyActivityDetailScreen(id)
-                                } else if (currentRoute.startsWith("/words/")) {
-                                    val id = currentRoute.substringAfterLast("/")
-                                    WordDetailScreen(id)
-                                } else if (currentRoute.startsWith("/groups/")) {
-                                    val id = currentRoute.substringAfterLast("/")
-                                    GroupDetailScreen(id)
+                        // Horizontal navigation bar for larger screens
+                        AppNavigationBar(
+                            currentRoute = currentRoute,
+                            onRouteSelected = { currentRoute = it }
+                        )
+
+                        // Content area
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            when (currentRoute) {
+                                "/dashboard" -> DashboardScreen(viewModel = viewModel)
+                                "/study-activities" -> StudyActivitiesScreen()
+                                "/words" -> WordsScreen()
+                                "/groups" -> GroupsScreen()
+                                "/sessions" -> SessionsScreen()
+                                "/settings" -> SettingsScreen()
+                                else -> {
+                                    if (currentRoute.startsWith("/study-activities/")) {
+                                        val id = currentRoute.substringAfterLast("/")
+                                        StudyActivityDetailScreen(id)
+                                    } else if (currentRoute.startsWith("/words/")) {
+                                        val id = currentRoute.substringAfterLast("/")
+                                        WordDetailScreen(id)
+                                    } else if (currentRoute.startsWith("/groups/")) {
+                                        val id = currentRoute.substringAfterLast("/")
+                                        GroupDetailScreen(id)
+                                    }
                                 }
                             }
                         }
@@ -113,6 +208,40 @@ private fun NavButton(
                 MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
         )
     ) {
-        Text(text)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(Icons.Default.Menu, contentDescription = text)
+            Text(text)
+        }
+    }
+}
+
+@Composable
+private fun CompactNavButton(
+    icon: ImageVector,
+    text: String, 
+    route: String,
+    currentRoute: String,
+    onRouteSelected: (String) -> Unit
+) {
+    Button(
+        onClick = { onRouteSelected(route) },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (currentRoute == route)
+                MaterialTheme.colors.primary
+            else
+                MaterialTheme.colors.surface
+        ),
+        modifier = Modifier.height(56.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(vertical = 4.dp)
+        ) {
+            Icon(icon, contentDescription = text)
+            Text(text, style = MaterialTheme.typography.caption)
+        }
     }
 }
