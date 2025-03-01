@@ -1,4 +1,4 @@
-package com.langportal.app
+package com.langportal.app.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import com.langportal.app.model.DashboardData
-import com.langportal.app.model.SessionSummary
 import com.langportal.app.viewmodel.DashboardState
 import com.langportal.app.viewmodel.DashboardViewModel
 
@@ -75,7 +74,6 @@ fun DashboardScreen() {
 
 @Composable
 private fun DashboardContent(data: DashboardData) {
-    // Progress Summary
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
@@ -119,61 +117,5 @@ private fun StatRow(label: String, value: Int, total: Int) {
             modifier = Modifier.fillMaxWidth().height(8.dp),
             strokeCap = StrokeCap.Round
         )
-    }
-}
-
-@Composable
-fun StudyActivitiesScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Study Activities")
-    }
-}
-
-@Composable
-fun StudyActivityDetailScreen(id: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Study Activity Detail: $id")
-    }
-}
-
-@Composable
-fun WordsScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Words")
-    }
-}
-
-@Composable
-fun WordDetailScreen(id: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Word Detail: $id")
-    }
-}
-
-@Composable
-fun GroupsScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Groups")
-    }
-}
-
-@Composable
-fun GroupDetailScreen(id: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Group Detail: $id")
-    }
-}
-
-@Composable
-fun SessionsScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Sessions")
-    }
-}
-
-@Composable
-fun SettingsScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Settings")
     }
 }
