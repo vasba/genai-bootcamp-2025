@@ -17,13 +17,6 @@ data class StudySession(
 )
 
 @Serializable
-data class StudyActivity(
-    val id: Long,
-    val name: String,
-    val url: String
-)
-
-@Serializable
 data class WordReviewItem(
     val id: Long,
     val correct: Boolean,

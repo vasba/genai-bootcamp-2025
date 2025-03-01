@@ -51,18 +51,21 @@ fun App() {
 
                         // Content area
                         Box(modifier = Modifier.weight(1f)) {
-                            when (currentRoute) {
-                                "/dashboard" -> DashboardScreen(viewModel = viewModel)
-                                "/study-activities" -> StudyActivitiesScreen()
-                                "/words" -> WordsScreen()
-                                "/groups" -> GroupsScreen()
-                                "/sessions" -> SessionsScreen()
-                                "/settings" -> SettingsScreen()
+                            when {
+                                currentRoute == "/dashboard" -> DashboardScreen(viewModel = viewModel)
+                                currentRoute == "/study-activities" -> StudyActivitiesScreen(
+                                    onActivitySelected = { id -> currentRoute = "/study-activities/$id" }
+                                )
+                                currentRoute.startsWith("/study-activities/") -> {
+                                    val id = currentRoute.substringAfterLast("/")
+                                    StudyActivityDetailScreen(id)
+                                }
+                                currentRoute == "/words" -> WordsScreen()
+                                currentRoute == "/groups" -> GroupsScreen()
+                                currentRoute == "/sessions" -> SessionsScreen()
+                                currentRoute == "/settings" -> SettingsScreen()
                                 else -> {
-                                    if (currentRoute.startsWith("/study-activities/")) {
-                                        val id = currentRoute.substringAfterLast("/")
-                                        StudyActivityDetailScreen(id)
-                                    } else if (currentRoute.startsWith("/words/")) {
+                                    if (currentRoute.startsWith("/words/")) {
                                         val id = currentRoute.substringAfterLast("/")
                                         WordDetailScreen(id)
                                     } else if (currentRoute.startsWith("/groups/")) {
@@ -152,18 +155,21 @@ fun App() {
 
                         // Content area
                         Box(modifier = Modifier.fillMaxSize()) {
-                            when (currentRoute) {
-                                "/dashboard" -> DashboardScreen(viewModel = viewModel)
-                                "/study-activities" -> StudyActivitiesScreen()
-                                "/words" -> WordsScreen()
-                                "/groups" -> GroupsScreen()
-                                "/sessions" -> SessionsScreen()
-                                "/settings" -> SettingsScreen()
+                            when {
+                                currentRoute == "/dashboard" -> DashboardScreen(viewModel = viewModel)
+                                currentRoute == "/study-activities" -> StudyActivitiesScreen(
+                                    onActivitySelected = { id -> currentRoute = "/study-activities/$id" }
+                                )
+                                currentRoute.startsWith("/study-activities/") -> {
+                                    val id = currentRoute.substringAfterLast("/")
+                                    StudyActivityDetailScreen(id)
+                                }
+                                currentRoute == "/words" -> WordsScreen()
+                                currentRoute == "/groups" -> GroupsScreen()
+                                currentRoute == "/sessions" -> SessionsScreen()
+                                currentRoute == "/settings" -> SettingsScreen()
                                 else -> {
-                                    if (currentRoute.startsWith("/study-activities/")) {
-                                        val id = currentRoute.substringAfterLast("/")
-                                        StudyActivityDetailScreen(id)
-                                    } else if (currentRoute.startsWith("/words/")) {
+                                    if (currentRoute.startsWith("/words/")) {
                                         val id = currentRoute.substringAfterLast("/")
                                         WordDetailScreen(id)
                                     } else if (currentRoute.startsWith("/groups/")) {
