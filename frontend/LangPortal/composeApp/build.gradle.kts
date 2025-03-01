@@ -68,6 +68,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+            implementation(compose.materialIconsExtended)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

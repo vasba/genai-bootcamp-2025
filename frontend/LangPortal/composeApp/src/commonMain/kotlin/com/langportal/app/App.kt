@@ -7,6 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,7 +42,11 @@ fun App() {
                             title = { Text("LangPortal") },
                             actions = {
                                 IconButton(onClick = { darkMode = !darkMode }) {
-                                    Text(if (darkMode) "☀️" else "🌙")
+                                    Icon(
+                                        imageVector = if (darkMode) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                                        contentDescription = if (darkMode) "Switch to light mode" else "Switch to dark mode",
+                                        tint = MaterialTheme.colors.onSurface
+                                    )
                                 }
                             }
                         )
@@ -131,7 +137,11 @@ fun App() {
                             title = { Text("LangPortal") },
                             actions = {
                                 IconButton(onClick = { darkMode = !darkMode }) {
-                                    Text(if (darkMode) "☀️" else "🌙")
+                                    Icon(
+                                        imageVector = if (darkMode) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                                        contentDescription = if (darkMode) "Switch to light mode" else "Switch to dark mode",
+                                        tint = MaterialTheme.colors.onSurface
+                                    )
                                 }
                             }
                         )
