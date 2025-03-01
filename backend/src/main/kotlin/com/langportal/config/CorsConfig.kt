@@ -19,6 +19,7 @@ class CorsConfig {
         config.addAllowedOrigin("http://localhost:8082") // Frontend dev server
         config.addAllowedOrigin("http://localhost:5173") // Alternative port
         config.addAllowedOrigin("http://localhost:3000") // Alternative port
+        config.addAllowedOrigin("http://localhost:8090") // Kotlin/Wasm frontend server
         config.addAllowedHeader("*")
         config.addAllowedMethod("*")
         

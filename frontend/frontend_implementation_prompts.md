@@ -10,12 +10,13 @@ Web can be started locally with: ./gradlew wasmJsBrowserDevelopmentRun
 
 ## Phase 2: Dashboard and Basic Components
 1. Implement Dashboard page (/dashboard) with connection to backend api from backend folder
-   - Extract the screens in separate files in appropriate folder
    - Create layout for last session summary based on data from getLastStudySession endpoint in StudySessionController in endpoint
    - Implement student progression display based on data we can fetch from backend
-      * total words studied
-      * total available words
    - Make it the default route
+
+2. Add to dashboard
+   - Last session card to the left of the student progression display
+   - Statistics card to the right of the student progression display
 
 ## Phase 3: Study Activities
 1. Implement Study Activities Index (/study-activities)

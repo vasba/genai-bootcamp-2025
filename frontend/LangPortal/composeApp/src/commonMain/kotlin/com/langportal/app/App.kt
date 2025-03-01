@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.langportal.app.screens.*
+import com.langportal.app.viewmodel.DashboardViewModel
 
 @Composable
 fun App() {
@@ -17,6 +18,7 @@ fun App() {
         val isDark = isSystemInDarkTheme()
         var darkMode by remember { mutableStateOf(isDark) }
         var currentRoute by remember { mutableStateOf("/dashboard") }
+        val viewModel = remember { DashboardViewModel() }
         
         MaterialTheme(
             colors = if (darkMode) darkColors() else lightColors()
@@ -49,7 +51,7 @@ fun App() {
                     // Content area
                     Box(modifier = Modifier.fillMaxSize()) {
                         when (currentRoute) {
-                            "/dashboard" -> DashboardScreen()
+                            "/dashboard" -> DashboardScreen(viewModel = viewModel)
                             "/study-activities" -> StudyActivitiesScreen()
                             "/words" -> WordsScreen()
                             "/groups" -> GroupsScreen()

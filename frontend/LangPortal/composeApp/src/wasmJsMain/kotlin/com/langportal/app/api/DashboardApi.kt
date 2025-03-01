@@ -1,40 +1,29 @@
 package com.langportal.app.api
 
-import com.langportal.app.model.DashboardData
-import kotlinx.browser.window
-import kotlinx.coroutines.await
+import com.langportal.app.model.StudySession
+import com.langportal.app.model.ReviewStatistics
 import kotlinx.serialization.json.Json
-import org.w3c.fetch.*
+import kotlinx.serialization.builtins.ListSerializer
 
 actual class DashboardApi {
-    private val backendUrl = "http://localhost:8080/api/statistics/words"
+    private val baseUrl = "http://localhost:8080/api"
     private val json = Json { 
         ignoreUnknownKeys = true 
         isLenient = true
-        coerceInputValues = true // Add this to handle numeric type coercion
     }
 
-    actual suspend fun getDashboardData(): Result<DashboardData> = runCatching {
-        val headers = Headers()
-        headers.append("Content-Type", "application/json")
-        headers.append("Accept", "application/json")
-        headers.append("Access-Control-Allow-Origin", "*")
+    actual suspend fun getLastSession(): Result<StudySession> = runCatching {
+        val response = fetchJson("$baseUrl/study-sessions/last")
+        json.decodeFromString<StudySession>(response)
+    }
 
-        val init = RequestInit(
-            method = "GET",
-            headers = headers,
-            mode = RequestMode.CORS,
-            cache = RequestCache.DEFAULT,
-            credentials = RequestCredentials.SAME_ORIGIN
-        )
-        
-        val response = window.fetch(backendUrl).await<Response>()
+    actual suspend fun getWordStatistics(): Result<ReviewStatistics> = runCatching {
+        val response = fetchJson("$baseUrl/statistics/words")
+        json.decodeFromString<ReviewStatistics>(response)
+    }
 
-        if (response.status.toInt() != 200) {
-            throw Exception("HTTP error! status: ${response.status}")
-        }
-        val responseText = response.text().await<Map<String, String>>()
-
-        json.decodeFromString(DashboardData.serializer(), responseText.toString())
+    actual suspend fun getSessions(): Result<List<StudySession>> = runCatching {
+        val response = fetchJson("$baseUrl/study-sessions")
+        json.decodeFromString(ListSerializer(StudySession.serializer()), response)
     }
 }

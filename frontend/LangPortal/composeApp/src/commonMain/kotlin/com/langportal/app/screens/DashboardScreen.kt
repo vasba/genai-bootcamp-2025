@@ -1,121 +1,87 @@
 package com.langportal.app.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
-import com.langportal.app.model.DashboardData
-import com.langportal.app.viewmodel.DashboardState
 import com.langportal.app.viewmodel.DashboardViewModel
+import com.langportal.app.model.StudySession
+import com.langportal.app.model.ReviewStatistics
+import kotlin.math.round
 
 @Composable
-fun DashboardScreen() {
-    val viewModel = remember { DashboardViewModel() }
+fun DashboardScreen(viewModel: DashboardViewModel) {
+    val lastSession by viewModel.lastSession.collectAsState()
+    val statistics by viewModel.statistics.collectAsState()
+    val error by viewModel.error.collectAsState()
     
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header with refresh button
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "Dashboard",
-                style = MaterialTheme.typography.h4
-            )
-            IconButton(onClick = { viewModel.refresh() }) {
-                Icon(Icons.Default.Refresh, "Refresh dashboard")
-            }
-        }
+        LastSessionSection(lastSession, error)
+        StatisticsSection(statistics, error)
+    }
+}
 
-        when (val state = viewModel.dashboardState.value) {
-            is DashboardState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxWidth().height(200.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+@Composable
+private fun LastSessionSection(data: StudySession?, error: String?) {
+    Section("Last Session") {
+        when {
+            error != null -> Text("Error: $error")
+            data == null -> CircularProgressIndicator()
+            else -> {
+                Column {
+                    Text("Activity: ${data.activityName}")
+                    Text("Group: ${data.groupName}")
+                    Text("Start Time: ${data.startTime}")
+                    if (data.endTime != null) {
+                        Text("End Time: ${data.endTime}")
+                    }
+                    Text("Reviews: ${data.reviewItemsCount}")
                 }
-            }
-            is DashboardState.Error -> {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    backgroundColor = MaterialTheme.colors.error.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = state.message,
-                        color = MaterialTheme.colors.error,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-            is DashboardState.Success -> {
-                DashboardContent(state.data)
             }
         }
     }
 }
 
 @Composable
-private fun DashboardContent(data: DashboardData) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(8.dp),
-        elevation = 4.dp
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                "Your Progress",
-                style = MaterialTheme.typography.h6
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            ProgressionStats(data)
+private fun StatisticsSection(data: ReviewStatistics?, error: String?) {
+    Section("Statistics") {
+        when {
+            error != null -> Text("Error: $error")
+            data == null -> CircularProgressIndicator()
+            else -> {
+                Column {
+                    Text("Total Reviews: ${data.totalReviews}")
+                    Text("Correct Reviews: ${data.correctReviews}")
+                    Text("Accuracy: ${formatPercent(data.accuracy)}%")
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun ProgressionStats(data: DashboardData) {
+private fun Section(
+    title: String,
+    content: @Composable () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        StatRow("Total Reviews", data.totalReviews, data.totalReviews)
-        StatRow("Correct Reviews", data.correctReviews, data.totalReviews)
-        StatRow("Accuracy", (data.accuracy * 100).toInt(), 100)
+        Text(title)
+        content()
     }
 }
 
-@Composable
-private fun StatRow(label: String, value: Int, total: Int) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(label)
-            Text("$value/$total")
-        }
-        LinearProgressIndicator(
-            progress = if (total > 0) value.toFloat() / total else 0f,
-            modifier = Modifier.fillMaxWidth().height(8.dp),
-            strokeCap = StrokeCap.Round
-        )
-    }
+private fun formatPercent(value: Double): String {
+    return round(value * 100).toInt().toString()
 }
