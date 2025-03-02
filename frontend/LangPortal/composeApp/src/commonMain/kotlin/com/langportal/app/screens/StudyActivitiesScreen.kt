@@ -132,13 +132,6 @@ private fun ActivityCard(
                 style = MaterialTheme.typography.h6
             )
             
-            // URL preview
-            Text(
-                text = activity.url,
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
-            )
-            
             // Launch button
             Button(
                 onClick = { activity.id?.let { onActivitySelected(it) } },
@@ -148,8 +141,8 @@ private fun ActivityCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = "Launch")
-                    Text("Launch Activity")
+                    Icon(Icons.Default.PlayArrow, contentDescription = "Open Activity")
+                    Text("Open Activity")
                 }
             }
         }
