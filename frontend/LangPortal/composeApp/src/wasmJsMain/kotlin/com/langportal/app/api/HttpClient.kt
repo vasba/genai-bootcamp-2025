@@ -18,6 +18,8 @@ actual suspend fun fetchJson(url: String): String {
         headers = headers
     )
 
+    val js = jso
+
     val response = window.fetch(url).await<Response>()
     val status = response.status.toInt()
     

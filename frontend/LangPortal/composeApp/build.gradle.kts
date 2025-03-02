@@ -76,7 +76,25 @@ kotlin {
         }
 
         // Add new sourceSets for wasmJs
-        val wasmJsMain by getting
+        val wasmJsMain by getting {
+            dependencies {
+                //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:0.3")
+            }
+        }
+        
+        val wasmJsTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 

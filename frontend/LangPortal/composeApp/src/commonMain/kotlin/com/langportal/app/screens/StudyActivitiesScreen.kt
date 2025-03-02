@@ -10,12 +10,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.langportal.app.consoleLog
 import com.langportal.app.model.StudyActivity
 import com.langportal.app.viewmodel.StudyActivitiesViewModel
 
 @Composable
 fun StudyActivitiesScreen(
-    onActivitySelected: (Long) -> Unit = {},
+    onActivitySelected: (String) -> Unit = {},
 ) {
     val viewModel = remember { StudyActivitiesViewModel() }
     val activities by viewModel.activities.collectAsState()
@@ -35,10 +36,7 @@ fun StudyActivitiesScreen(
                 onRetry = { viewModel.retryLoading() }
             )
             activities.isEmpty() -> EmptyState()
-            else -> ActivityGrid(
-                activities = activities,
-                onActivitySelected = onActivitySelected
-            )
+            else -> ActivityGrid(activities, onActivitySelected)
         }
     }
 }
@@ -99,7 +97,7 @@ private fun EmptyState() {
 @Composable
 private fun ActivityGrid(
     activities: List<StudyActivity>,
-    onActivitySelected: (Long) -> Unit
+    onActivitySelected: (String) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 300.dp),
@@ -116,7 +114,7 @@ private fun ActivityGrid(
 @Composable
 private fun ActivityCard(
     activity: StudyActivity,
-    onActivitySelected: (Long) -> Unit
+    onActivitySelected: (String) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -126,15 +124,14 @@ private fun ActivityCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Activity title
             Text(
                 text = activity.name,
                 style = MaterialTheme.typography.h6
             )
             
-            // Launch button
             Button(
-                onClick = { activity.id?.let { onActivitySelected(it) } },
+                onClick = { println(activity.toString())
+                    onActivitySelected(activity.url) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -142,7 +139,7 @@ private fun ActivityCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Default.PlayArrow, contentDescription = "Open Activity")
-                    Text("Open Activity")
+                    Text("Start Activity")
                 }
             }
         }
@@ -150,8 +147,18 @@ private fun ActivityCard(
 }
 
 @Composable
-fun StudyActivityDetailScreen(id: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Study Activity Detail: $id")
+fun StudyActivityDetailScreen(activityId: String) {
+    val parts = activityId.split("/")
+    consoleLog("Unknown activity type with id: $activityId") // Log!
+
+    if (parts.size == 1 && parts[0] == "flashcards") {
+        FlashcardScreen(
+            groupId = 1,
+            onFinish = { /* Handle finish */ }
+        )
+    } else {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Unknown activity type")
+        }
     }
 }

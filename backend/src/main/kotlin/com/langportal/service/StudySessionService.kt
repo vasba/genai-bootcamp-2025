@@ -28,14 +28,14 @@ class StudySessionService(
     }
 
     @Transactional
-    fun createStudySession(studyActivity: Long, group: Long): StudySession {
-        val activity = studyActivityRepository.findById(studyActivity)
-            .orElseThrow { EntityNotFoundException("Study activity not found with id: $studyActivity") }
-        val groupRef = groupService.getGroup(group)
+    fun createStudySession(studyActivityId: Long, groupId: Long): StudySession {
+        val activity = studyActivityRepository.findById(studyActivityId)
+            .orElseThrow { EntityNotFoundException("Study activity not found with id: $studyActivityId") }
+        val group = groupService.getGroup(groupId)
             
         val session = StudySession(
             studyActivity = activity,
-            group = groupRef,
+            group = group,
             startTime = LocalDateTime.now()
         )
         return studySessionRepository.save(session)

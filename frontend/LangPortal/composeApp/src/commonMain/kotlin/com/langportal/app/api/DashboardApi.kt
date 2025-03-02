@@ -5,7 +5,6 @@ import com.langportal.app.model.StudySession
 import com.langportal.app.model.ReviewStatistics
 import kotlinx.serialization.json.Json
 
-expect suspend fun fetchJson(url: String): String
 
 expect class DashboardApi() {
     suspend fun getLastSession(): Result<StudySession>
