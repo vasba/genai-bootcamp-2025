@@ -35,9 +35,9 @@ class StudySessionController(
     @PostMapping("/{id}/review")
     fun addReview(
         @PathVariable id: Long,
-        @RequestBody review: WordReviewItemDTO,
+        @RequestBody review: WordReviewRequestDTO,
     ): ResponseEntity<ApiResponse<Boolean>> {
-        val reviewItem = wordReviewService.createWordReview(id, review.word.id, review.correct)
+        val reviewItem = wordReviewService.createWordReview(id, review.wordId, review.correct)
         return ResponseEntity.ok(ApiResponse.success(true))
     }
 

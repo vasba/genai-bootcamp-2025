@@ -74,14 +74,10 @@ class StudySessionControllerTest {
         // given
         val sessionId = 1L
         val wordId = 1L
-        val wordDTO = WordDTO(id = wordId, sourceWord = "test", targetWord = "test")
-        val reviewDTO =
-            WordReviewItemDTO(
-                id = 1L, // Changed from null to 1L
-                word = wordDTO,
-                correct = true,
-                timestamp = LocalDateTime.now(),
-            )
+        val reviewRequest = WordReviewRequestDTO(
+            wordId = wordId,
+            correct = true
+        )
 
         val word = Word(id = wordId, sourceWord = "test", targetWord = "test")
         val session =
@@ -104,7 +100,7 @@ class StudySessionControllerTest {
         every { wordReviewService.createWordReview(sessionId, wordId, true) } returns savedReview
 
         // when
-        val response = studySessionController.addReview(sessionId, reviewDTO)
+        val response = studySessionController.addReview(sessionId, reviewRequest)
 
         // then
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)

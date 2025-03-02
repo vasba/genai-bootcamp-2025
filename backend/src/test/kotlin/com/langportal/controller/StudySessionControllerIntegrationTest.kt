@@ -1,8 +1,7 @@
 package com.langportal.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.langportal.dto.WordDTO
-import com.langportal.dto.WordReviewItemDTO
+import com.langportal.dto.WordReviewRequestDTO
 import com.langportal.model.*
 import com.langportal.repository.*
 import jakarta.persistence.EntityManager
@@ -126,24 +125,17 @@ class StudySessionControllerIntegrationTest {
 
     @Test
     fun `addReview adds word review successfully`() {
-        val review =
-            WordReviewItemDTO(
-                word =
-                    WordDTO(
-                        id = romanianWord.id!!,
-                        sourceWord = romanianWord.sourceWord,
-                        targetWord = romanianWord.targetWord,
-                    ),
-                id = 50L,
+        val reviewRequest =
+            WordReviewRequestDTO(
+                wordId = romanianWord.id!!,
                 correct = true,
-                timestamp = LocalDateTime.now(),
             )
 
         mockMvc
             .perform(
                 post("/study-sessions/${vocabularySession.id}/review")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(review)),
+                    .content(objectMapper.writeValueAsString(reviewRequest)),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.data").value(true))
     }
