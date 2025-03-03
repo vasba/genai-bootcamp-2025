@@ -31,7 +31,11 @@ fun FlashcardScreen(
         contentAlignment = Alignment.Center
     ) {
         when {
-            error != null -> ErrorState(error!!, onRetry = { viewModel.startSession(groupId) })
+            error != null -> ErrorState(
+                error = error!!,
+                onRetry = { viewModel.startSession(groupId) },
+                onBack = onFinish
+            )
             isLoading -> LoadingState()
             flashcardState != null -> FlashcardContent(
                 state = flashcardState!!,
@@ -56,18 +60,54 @@ private fun LoadingState() {
 }
 
 @Composable
-private fun ErrorState(error: String, onRetry: () -> Unit) {
+private fun ErrorState(error: String, onRetry: () -> Unit, onBack: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = error,
+            text = if (error.contains("No more words") || error.contains("Empty group") || error.contains("no words")) {
+                "This group has no words available for practice"
+            } else {
+                error
+            },
             color = MaterialTheme.colors.error,
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.body1,
+            textAlign = TextAlign.Center
         )
-        Button(onClick = onRetry) {
-            Text("Retry")
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = onRetry,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.primary
+                )
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Refresh, contentDescription = "Retry")
+                    Text("Retry")
+                }
+            }
+
+            Button(
+                onClick = onBack,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.secondary
+                )
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back to Groups")
+                    Text("Back to Groups")
+                }
+            }
         }
     }
 }
