@@ -130,8 +130,10 @@ private fun ActivityCard(
             )
             
             Button(
-                onClick = { println("onClick ${activity}")
-                    onActivitySelected(activity.url) },
+                onClick = { 
+                    val activityRoute = if (activity.url == "flashcards") "flashcards" else activity.url
+                    onActivitySelected(activityRoute)
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -139,7 +141,7 @@ private fun ActivityCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Default.PlayArrow, contentDescription = "Open Activity")
-                    Text("Start Activity")
+                    Text("Open Activity")
                 }
             }
         }
@@ -148,14 +150,24 @@ private fun ActivityCard(
 
 @Composable
 fun StudyActivityDetailScreen(activityId: String) {
-    val parts = activityId.split("/")
-    consoleLog("Unknown activity type with id: $activityId") // Log!
+    var selectedGroupId by remember { mutableStateOf<Long?>(null) }
 
-    if (parts.size == 1 && parts[0] == "flashcards") {
-        FlashcardScreen(
-            groupId = 1,
-            onFinish = { /* Handle finish */ }
-        )
+    if (activityId == "flashcards") {
+        if (selectedGroupId != null) {
+            FlashcardScreen(
+                groupId = selectedGroupId!!,
+                onFinish = { selectedGroupId = null }
+            )
+        } else {
+            GroupsScreen(
+                onGroupSelected = { groupRoute -> 
+                    val groupId = groupRoute.substringAfter("flashcards/").toLongOrNull()
+                    if (groupId != null) {
+                        selectedGroupId = groupId
+                    }
+                }
+            )
+        }
     } else {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("Unknown activity type")

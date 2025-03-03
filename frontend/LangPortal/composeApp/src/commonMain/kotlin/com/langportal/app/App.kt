@@ -61,11 +61,22 @@ fun App() {
                                     StudyActivityDetailScreen(id)
                                 }
                                 currentRoute == "/words" -> WordsScreen()
-                                currentRoute == "/groups" -> GroupsScreen()
+                                currentRoute == "/groups" -> GroupsScreen(
+                                    onGroupSelected = { id -> currentRoute = "/flashcards/$id" }
+                                )
                                 currentRoute == "/sessions" -> SessionsScreen()
                                 currentRoute == "/settings" -> SettingsScreen()
                                 else -> {
-                                    if (currentRoute.startsWith("/words/")) {
+                                    if (currentRoute.startsWith("/flashcards/")) {
+                                        val id = currentRoute.substringAfter("/flashcards/")
+                                        val groupId = id.toLongOrNull()
+                                        if (groupId != null) {
+                                            FlashcardScreen(
+                                                groupId = groupId,
+                                                onFinish = { currentRoute = "/groups" }
+                                            )
+                                        }
+                                    } else if (currentRoute.startsWith("/words/")) {
                                         val id = currentRoute.substringAfterLast("/")
                                         WordDetailScreen(id)
                                     } else if (currentRoute.startsWith("/groups/")) {
@@ -165,11 +176,22 @@ fun App() {
                                     StudyActivityDetailScreen(id)
                                 }
                                 currentRoute == "/words" -> WordsScreen()
-                                currentRoute == "/groups" -> GroupsScreen()
+                                currentRoute == "/groups" -> GroupsScreen(
+                                    onGroupSelected = { id -> currentRoute = "/flashcards/$id" }
+                                )
                                 currentRoute == "/sessions" -> SessionsScreen()
                                 currentRoute == "/settings" -> SettingsScreen()
                                 else -> {
-                                    if (currentRoute.startsWith("/words/")) {
+                                    if (currentRoute.startsWith("/flashcards/")) {
+                                        val id = currentRoute.substringAfter("/flashcards/")
+                                        val groupId = id.toLongOrNull()
+                                        if (groupId != null) {
+                                            FlashcardScreen(
+                                                groupId = groupId,
+                                                onFinish = { currentRoute = "/groups" }
+                                            )
+                                        }
+                                    } else if (currentRoute.startsWith("/words/")) {
                                         val id = currentRoute.substringAfterLast("/")
                                         WordDetailScreen(id)
                                     } else if (currentRoute.startsWith("/groups/")) {
