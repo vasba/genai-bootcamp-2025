@@ -130,10 +130,7 @@ private fun ActivityCard(
             )
             
             Button(
-                onClick = { 
-                    val activityRoute = if (activity.url == "flashcards") "flashcards" else activity.url
-                    onActivitySelected(activityRoute)
-                },
+                onClick = { onActivitySelected(activity.url.removePrefix("/study/")) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
@@ -152,25 +149,45 @@ private fun ActivityCard(
 fun StudyActivityDetailScreen(activityId: String) {
     var selectedGroupId by remember { mutableStateOf<Long?>(null) }
 
-    if (activityId == "flashcards") {
-        if (selectedGroupId != null) {
-            FlashcardScreen(
-                groupId = selectedGroupId!!,
-                onFinish = { selectedGroupId = null }
-            )
-        } else {
-            GroupsScreen(
-                onGroupSelected = { groupRoute -> 
-                    val groupId = groupRoute.substringAfter("flashcards/").toLongOrNull()
-                    if (groupId != null) {
-                        selectedGroupId = groupId
+    when (activityId) {
+        "flashcards" -> {
+            if (selectedGroupId != null) {
+                FlashcardScreen(
+                    groupId = selectedGroupId!!,
+                    onFinish = { selectedGroupId = null }
+                )
+            } else {
+                GroupsScreen(
+                    onGroupSelected = { groupRoute -> 
+                        val groupId = groupRoute.substringAfter("flashcards/").toLongOrNull()
+                        if (groupId != null) {
+                            selectedGroupId = groupId
+                        }
                     }
-                }
-            )
+                )
+            }
         }
-    } else {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Unknown activity type")
+        "multiple-choice" -> {
+            if (selectedGroupId != null) {
+                MultipleChoiceScreen(
+                    groupId = selectedGroupId!!,
+                    onFinish = { selectedGroupId = null }
+                )
+            } else {
+                GroupsScreen(
+                    onGroupSelected = { groupRoute -> 
+                        val groupId = groupRoute.substringAfter("flashcards/").toLongOrNull()
+                        if (groupId != null) {
+                            selectedGroupId = groupId
+                        }
+                    }
+                )
+            }
+        }
+        else -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Unknown activity type")
+            }
         }
     }
 }
