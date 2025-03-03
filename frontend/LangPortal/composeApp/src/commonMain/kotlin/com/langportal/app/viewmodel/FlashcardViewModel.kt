@@ -29,7 +29,6 @@ class FlashcardViewModel : BaseViewModel() {
                     .onSuccess { state -> _flashcardState.value = state }
                     .onFailure { error -> _error.value = error.message }
             } finally {
-                println(_error.value)
                 _isLoading.value = false
             }
         }
@@ -41,14 +40,13 @@ class FlashcardViewModel : BaseViewModel() {
 
     fun submitAnswer(correct: Boolean) {
         val currentState = _flashcardState.value ?: return
-
+        println("current state in submitAnswer: $currentState")
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
                 val answer = FlashcardAnswer(currentState.currentWordId, correct)
                 api.submitAnswer(currentState.sessionId, answer)
-                    .onSuccess { state -> _flashcardState.value = state }
                     .onFailure { error -> _error.value = error.message }
             } finally {
                 _isLoading.value = false
@@ -64,8 +62,10 @@ class FlashcardViewModel : BaseViewModel() {
             _error.value = null
             try {
                 api.getNextWord(currentState.sessionId)
-                    .onSuccess { state -> _flashcardState.value = state }
-                    .onFailure { error -> _error.value = error.message }
+                    .onSuccess { state -> println(state)
+                        _flashcardState.value = state }
+                    .onFailure { error -> println("getNextWord error ${error.message}")
+                        _error.value = error.message }
             } finally {
                 _isLoading.value = false
             }

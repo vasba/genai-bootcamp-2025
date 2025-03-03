@@ -130,7 +130,7 @@ private fun ActivityCard(
             )
             
             Button(
-                onClick = { println(activity.toString())
+                onClick = { println("onClick ${activity}")
                     onActivitySelected(activity.url) },
                 modifier = Modifier.fillMaxWidth()
             ) {

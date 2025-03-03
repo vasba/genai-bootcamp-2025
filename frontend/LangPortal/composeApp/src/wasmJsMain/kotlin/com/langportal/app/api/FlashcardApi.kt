@@ -26,6 +26,8 @@ data class GroupResponse(
 
 actual class FlashcardApi {
     private val baseUrl = KtorHttpClient.BASE_URL
+    private var cachedWords: List<WordDTO> = emptyList()
+    private var currentWordIndex: Int = 0
 
     actual suspend fun startSession(groupId: Long): Result<FlashcardState> = runCatching {
         // Create a new session first
@@ -37,29 +39,52 @@ actual class FlashcardApi {
         val session = sessionResponse.data
         val sessionId = session.id
 
-        // Get first word from group
+        // Get words from group and cache them
         val groupResponse = KtorHttpClient.client.get("$baseUrl/groups/$groupId").body<GroupResponse>()
-        val firstWord = groupResponse.words.first()
+        cachedWords = groupResponse.words
+        currentWordIndex = 0
+        val firstWord = cachedWords.first()
         
         FlashcardState(
             currentWordId = firstWord.id,
             sourceWord = firstWord.sourceWord,
             targetWord = firstWord.targetWord,
-            totalWords = groupResponse.words.size,
+            totalWords = cachedWords.size,
             completedWords = 0,
             correctAnswers = 0,
             sessionId = sessionId
         )
     }
     
-    actual suspend fun submitAnswer(sessionId: Long, answer: FlashcardAnswer): Result<FlashcardState> = runCatching {
-        KtorHttpClient.client.post("$baseUrl/study-sessions/$sessionId/review") {
+    actual suspend fun submitAnswer(sessionId: Long, answer: FlashcardAnswer): Result<Boolean> = runCatching {
+        val response = KtorHttpClient.client.post("$baseUrl/study-sessions/$sessionId/review") {
             contentType(ContentType.Application.Json)
             setBody(answer)
-        }.body()
+        }.body<ApiResponse<Boolean>>()
+        
+        if (!response.success) {
+            throw Exception(response.error ?: "Unknown error occurred while submitting answer")
+        }
+        
+        response.data
     }
 
     actual suspend fun getNextWord(sessionId: Long): Result<FlashcardState> = runCatching {
-        KtorHttpClient.client.get("$baseUrl/study-sessions/$sessionId/next").body()
+        // Instead of making an API call, use the cached words
+        currentWordIndex++
+        if (currentWordIndex >= cachedWords.size) {
+            throw IllegalStateException("No more words available in the session")
+        }
+        
+        val nextWord = cachedWords[currentWordIndex]
+        FlashcardState(
+            currentWordId = nextWord.id,
+            sourceWord = nextWord.sourceWord,
+            targetWord = nextWord.targetWord,
+            totalWords = cachedWords.size,
+            completedWords = currentWordIndex,
+            correctAnswers = 0, // This should be updated based on the session state
+            sessionId = sessionId
+        )
     }
 }
