@@ -98,6 +98,8 @@ private fun WordList(state: WordListState, viewModel: WordListViewModel) {
                 Text("Source Word", style = MaterialTheme.typography.subtitle1, modifier = Modifier.weight(1f))
                 Text("Target Word", style = MaterialTheme.typography.subtitle1, modifier = Modifier.weight(1f))
                 Text("Word Groups", style = MaterialTheme.typography.subtitle1, modifier = Modifier.weight(1f))
+                Text("Correct Reviews", style = MaterialTheme.typography.subtitle1, modifier = Modifier.weight(0.5f))
+                Text("Incorrect Reviews", style = MaterialTheme.typography.subtitle1, modifier = Modifier.weight(0.5f))
             }
         }
         
@@ -121,6 +123,16 @@ private fun WordList(state: WordListState, viewModel: WordListViewModel) {
                         Text(
                             word.groups?.joinToString(", ") { it.name } ?: "",
                             modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = word.correctReviews.toString(),
+                            modifier = Modifier.weight(0.5f),
+                            color = MaterialTheme.colors.primary
+                        )
+                        Text(
+                            text = word.incorrectReviews.toString(),
+                            modifier = Modifier.weight(0.5f),
+                            color = MaterialTheme.colors.error
                         )
                     }
                 }
