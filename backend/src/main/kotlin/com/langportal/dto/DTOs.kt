@@ -13,7 +13,9 @@ data class WordDTO(
     val id: Long,
     val sourceWord: String,
     val targetWord: String,
-    val groups: List<GroupDTO> = emptyList()
+    val groups: List<GroupDTO> = emptyList(),
+    val correctReviews: Int = 0,
+    val incorrectReviews: Int = 0
 )
 
 data class WordReviewItemDTO(

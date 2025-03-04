@@ -8,11 +8,16 @@ import java.time.LocalDateTime
 @Component
 class ModelMapper {
     fun toWordDTO(word: Word): WordDTO {
+        val correctReviews = word.reviewItems.count { it.correct }
+        val incorrectReviews = word.reviewItems.size - correctReviews
+        
         return WordDTO(
             id = word.id!!,
             sourceWord = word.sourceWord,
             targetWord = word.targetWord,
-            groups = word.groups?.map { toGroupWithoutWords(it) } ?: emptyList()
+            groups = word.groups?.map { toGroupWithoutWords(it) } ?: emptyList(),
+            correctReviews = correctReviews,
+            incorrectReviews = incorrectReviews
         )
     }
 

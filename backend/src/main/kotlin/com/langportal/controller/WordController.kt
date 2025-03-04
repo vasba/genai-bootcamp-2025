@@ -2,7 +2,7 @@ package com.langportal.controller
 
 import com.langportal.dto.WordDTO
 import com.langportal.mapper.ModelMapper
-import com.langportal.model.Word
+import com.langportal.model.Word 
 import com.langportal.service.WordService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -39,6 +39,7 @@ class WordController(
         val actualOrder = if (order.lowercase() in listOf("asc", "desc")) order.lowercase() else "asc"
         val pageable = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Direction.fromString(actualOrder), actualSortBy))
         val wordsPage = wordService.getWords("", pageable)
+        
         return ResponseEntity.ok(
             WordsResponse(
                 words = wordsPage.content.map { modelMapper.toWordDTO(it) },

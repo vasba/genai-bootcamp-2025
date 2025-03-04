@@ -16,5 +16,8 @@ data class Word(
     val targetWord: String,
     
     @ManyToMany(mappedBy = "words", fetch = FetchType.LAZY)
-    val groups: MutableList<Group> = mutableListOf()
+    val groups: MutableList<Group> = mutableListOf(),
+
+    @OneToMany(mappedBy = "word", fetch = FetchType.LAZY)
+    val reviewItems: List<WordReviewItem> = emptyList()
 )
