@@ -7,15 +7,6 @@ import com.langportal.app.model.WordDTO
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class WordsResponse(
-    val words: List<WordDTO>,
-    val totalPages: Int,
-    val currentPage: Int,
-    val totalWords: Long
-)
 
 actual class MultipleChoiceApi {
     private val baseUrl = KtorHttpClient.BASE_URL
@@ -27,9 +18,8 @@ actual class MultipleChoiceApi {
         if (cachedAllWords == null) {
             val response = KtorHttpClient.client.get("$baseUrl/words").body<WordsResponse>()
             cachedAllWords = response.words
-            println("getAllWords: $cachedAllWords")
         }
-        return cachedAllWords!!
+        return cachedAllWords ?: emptyList()
     }
 
     actual suspend fun startSession(groupId: Long): Result<MultipleChoiceState> = runCatching {
