@@ -20,7 +20,7 @@ class GroupController(
     @GetMapping
     fun getAllGroups(): ResponseEntity<List<GroupDTO>> {
         val groups = groupService.getAllGroups()
-        return ResponseEntity.ok(groups.map { modelMapper.toGroupWithoutWords(it) })
+        return ResponseEntity.ok(groups.map { modelMapper.toGroupDTO(it) })
     }
 
     @GetMapping("/{id}")
@@ -59,8 +59,8 @@ class GroupController(
     @GetMapping("/{id}/stats")
     fun getGroupStatistics(
         @PathVariable id: Long,
-    ): ResponseEntity<ReviewStatsDTO> {
-        return try {
+    ): ResponseEntity<ReviewStatsDTO> =
+        try {
             val stats = statisticsService.getGroupStatistics(id)
             ResponseEntity.ok(
                 ReviewStatsDTO(
@@ -72,5 +72,4 @@ class GroupController(
         } catch (e: NoSuchElementException) {
             ResponseEntity.notFound().build()
         }
-    }
 }

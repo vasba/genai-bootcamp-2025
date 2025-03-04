@@ -10,36 +10,34 @@ class ModelMapper {
     fun toWordDTO(word: Word): WordDTO {
         val correctReviews = word.reviewItems.count { it.correct }
         val incorrectReviews = word.reviewItems.size - correctReviews
-        
+
         return WordDTO(
             id = word.id!!,
             sourceWord = word.sourceWord,
             targetWord = word.targetWord,
             groups = word.groups?.map { toGroupWithoutWords(it) } ?: emptyList(),
             correctReviews = correctReviews,
-            incorrectReviews = incorrectReviews
+            incorrectReviews = incorrectReviews,
         )
     }
 
-    fun toGroupDTO(group: Group): GroupDTO {
-        return GroupDTO(
+    fun toGroupDTO(group: Group): GroupDTO =
+        GroupDTO(
             id = group.id!!, // Ensure id is non-nullable
             name = group.name,
             description = group.description,
-            words = group.words.map { toWordDTO(it) }
+            words = group.words.map { toWordDTO(it) },
         )
-    }
 
-    fun toGroupWithoutWords(group: Group): GroupDTO {
-        return GroupDTO(
+    fun toGroupWithoutWords(group: Group): GroupDTO =
+        GroupDTO(
             id = group.id!!, // Ensure id is non-nullable
             name = group.name,
-            description = group.description
+            description = group.description,
         )
-    }
 
-    fun toStudySessionDTO(session: StudySession): StudySessionDTO {
-        return StudySessionDTO(
+    fun toStudySessionDTO(session: StudySession): StudySessionDTO =
+        StudySessionDTO(
             id = session.id!!,
             groupId = session.group.id!!,
             groupName = session.group.name,
@@ -49,16 +47,14 @@ class ModelMapper {
             endTime = session.endTime,
             reviewItemsCount = session.reviewItems.size,
             studyActivityId = session.studyActivity.id!!,
-            createdAt = LocalDateTime.now()
+            createdAt = LocalDateTime.now(),
         )
-    }
 
-    fun toWordReviewItemDTO(item: WordReviewItem): WordReviewItemDTO {
-        return WordReviewItemDTO(
+    fun toWordReviewItemDTO(item: WordReviewItem): WordReviewItemDTO =
+        WordReviewItemDTO(
             id = item.id!!,
             word = toWordDTO(item.word),
             correct = item.correct,
-            timestamp = item.timestamp
+            timestamp = item.timestamp,
         )
-    }
 }

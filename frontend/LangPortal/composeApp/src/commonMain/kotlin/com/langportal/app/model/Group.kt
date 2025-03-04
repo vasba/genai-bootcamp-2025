@@ -7,5 +7,5 @@ data class Group(
     val id: Long,
     val name: String,
     val description: String? = null,
-    val wordsCount: Int = 0
+    val words: List<WordDTO> = emptyList()
 )
