@@ -163,7 +163,9 @@ fun StudyActivityDetailScreen(activityId: String) {
                         if (groupId != null) {
                             selectedGroupId = groupId
                         }
-                    }
+                    },
+                    fromActivity = true,
+                    activityName = "Flashcards"
                 )
             }
         }
@@ -180,7 +182,9 @@ fun StudyActivityDetailScreen(activityId: String) {
                         if (groupId != null) {
                             selectedGroupId = groupId
                         }
-                    }
+                    },
+                    fromActivity = true,
+                    activityName = "Multiple Choice"
                 )
             }
         }

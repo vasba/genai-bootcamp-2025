@@ -62,7 +62,7 @@ fun App() {
                                 }
                                 currentRoute == "/words" -> WordsScreen()
                                 currentRoute == "/groups" -> GroupsScreen(
-                                    onGroupSelected = { id -> currentRoute = "/flashcards/$id" }
+                                    onGroupSelected = { id -> currentRoute = "/groups/$id" }
                                 )
                                 currentRoute == "/sessions" -> SessionsScreen()
                                 currentRoute == "/settings" -> SettingsScreen()
@@ -177,7 +177,7 @@ fun App() {
                                 }
                                 currentRoute == "/words" -> WordsScreen()
                                 currentRoute == "/groups" -> GroupsScreen(
-                                    onGroupSelected = { id -> currentRoute = "/flashcards/$id" }
+                                    onGroupSelected = { id -> currentRoute = "/groups/$id" }
                                 )
                                 currentRoute == "/sessions" -> SessionsScreen()
                                 currentRoute == "/settings" -> SettingsScreen()

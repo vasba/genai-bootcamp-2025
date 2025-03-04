@@ -3,7 +3,6 @@ package com.langportal.app.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.clickable
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,10 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.langportal.app.model.Group
 import com.langportal.app.viewmodel.GroupsViewModel
+import com.langportal.app.viewmodel.GroupDetailViewModel
 
 @Composable
 fun GroupsScreen(
-    onGroupSelected: (String) -> Unit = {}
+    onGroupSelected: (String) -> Unit = {},
+    fromActivity: Boolean = false,
+    activityName: String = "" // Added parameter for activity name
 ) {
     val viewModel = remember { GroupsViewModel() }
     val groups by viewModel.groups.collectAsState()
@@ -33,7 +35,7 @@ fun GroupsScreen(
             isLoading -> LoadingState()
             error != null -> ErrorState(error = error!!, onRetry = { viewModel.retryLoading() })
             groups.isEmpty() -> EmptyState()
-            else -> GroupTable(groups, onGroupSelected)
+            else -> GroupTable(groups, onGroupSelected, fromActivity, activityName)
         }
     }
 }
@@ -94,7 +96,9 @@ private fun EmptyState() {
 @Composable
 fun GroupTable(
     groups: List<Group>,
-    onSelectGroup: (String) -> Unit
+    onSelectGroup: (String) -> Unit,
+    fromActivity: Boolean,
+    activityName: String
 ) {
     var currentPage by remember { mutableStateOf(0) }
     val pageSize = 10
@@ -108,16 +112,50 @@ fun GroupTable(
             .padding(horizontal = 8.dp, vertical = 4.dp)) {
             Text(text = "Group Name", modifier = Modifier.weight(1f), style = MaterialTheme.typography.subtitle1)
             Text(text = "Words Count", modifier = Modifier.weight(1f), style = MaterialTheme.typography.subtitle1)
+            if (fromActivity) {
+                Text(text = "Action", modifier = Modifier.weight(1f), style = MaterialTheme.typography.subtitle1)
+            }
         }
         Divider()
         LazyColumn {
             items(currentPageGroups) { group ->
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .clickable { onSelectGroup(group.id.toString()) }) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(text = group.name, modifier = Modifier.weight(1f))
                     Text(text = "${group.words.size}", modifier = Modifier.weight(1f))
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (fromActivity) {
+                            Button(
+                                onClick = { onSelectGroup("flashcards/${group.id}") },
+                                modifier = Modifier.fillMaxWidth(0.8f)
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(Icons.Default.PlayArrow, contentDescription = "Start Activity")
+                                    Text("Start ${activityName.replaceFirstChar { it.uppercase() }}")
+                                }
+                            }
+                        } else {
+                            Button(
+                                onClick = { onSelectGroup("groups/${group.id}") },
+                                modifier = Modifier.fillMaxWidth(0.8f)
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(Icons.Default.Info, contentDescription = "View Group Details")
+                                    Text("View Details")
+                                }
+                            }
+                        }
+                    }
                 }
                 Divider()
             }
@@ -187,7 +225,92 @@ private fun GroupCard(
 
 @Composable
 fun GroupDetailScreen(id: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Group Detail: $id")
+    val viewModel = remember { GroupDetailViewModel() }
+    val group by viewModel.group.collectAsState()
+    val error by viewModel.error.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    LaunchedEffect(id) {
+        viewModel.loadGroup(id)
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        when {
+            isLoading -> LoadingState()
+            error != null -> ErrorState(error = error!!, onRetry = { viewModel.retryLoading(id) })
+            group == null -> Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Group not found", style = MaterialTheme.typography.h6)
+            }
+            else -> {
+                // Group header
+                Text(group!!.name, style = MaterialTheme.typography.h5)
+                group!!.description?.let {
+                    Text(it, style = MaterialTheme.typography.body1)
+                }
+                Divider()
+                
+                // Words list header
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Words in Group", style = MaterialTheme.typography.h6)
+                    Text("${group!!.words.size} words", style = MaterialTheme.typography.subtitle1)
+                }
+                
+                // Words list
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(group!!.words) { word ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            elevation = 2.dp
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Text(
+                                        word.sourceWord,
+                                        style = MaterialTheme.typography.subtitle1
+                                    )
+                                    Text(
+                                        word.targetWord,
+                                        style = MaterialTheme.typography.body1,
+                                        color = MaterialTheme.colors.primary
+                                    )
+                                }
+                                Column(
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Text(
+                                        "✓ ${word.correctReviews}",
+                                        style = MaterialTheme.typography.caption,
+                                        color = MaterialTheme.colors.primary
+                                    )
+                                    Text(
+                                        "✗ ${word.incorrectReviews}",
+                                        style = MaterialTheme.typography.caption,
+                                        color = MaterialTheme.colors.error
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
