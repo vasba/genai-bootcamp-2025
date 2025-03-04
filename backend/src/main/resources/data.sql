@@ -11,8 +11,7 @@ INSERT INTO groups (name, description, words_count) VALUES
 
 INSERT INTO study_activities (name, url) VALUES
 ('Flashcards', '/study/flashcards'),
-('Multiple Choice', '/study/multiple-choice'),
-('Word Match', '/study/word-match');
+('Multiple Choice', '/study/multiple-choice');
 
 INSERT or IGNORE INTO word_groups (word_id, group_id) VALUES
 (1, 1), (2, 1), (3, 1), (4, 1), (5, 1),
