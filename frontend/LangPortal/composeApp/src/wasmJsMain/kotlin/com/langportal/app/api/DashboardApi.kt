@@ -2,6 +2,7 @@ package com.langportal.app.api
 
 import com.langportal.app.model.StudySession
 import com.langportal.app.model.ReviewStatistics
+import com.langportal.app.model.Page
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 
@@ -16,7 +17,10 @@ actual class DashboardApi {
         KtorHttpClient.client.get("$baseUrl/statistics/words").body()
     }
 
-    actual suspend fun getSessions(): Result<List<StudySession>> = runCatching {
-        KtorHttpClient.client.get("$baseUrl/study-sessions").body()
+    actual suspend fun getSessions(page: Int, size: Int): Result<Page<StudySession>> = runCatching {
+        KtorHttpClient.client.get("$baseUrl/study-sessions") {
+            parameter("page", page)
+            parameter("size", size)
+        }.body()
     }
 }

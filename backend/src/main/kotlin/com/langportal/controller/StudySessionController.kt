@@ -54,6 +54,12 @@ class StudySessionController(
     }
 
     @GetMapping
+    fun getAllSessions(pageable: Pageable): ResponseEntity<Page<StudySessionDTO>> {
+        val sessions = studySessionService.getAllStudySessions(pageable)
+        return ResponseEntity.ok(sessions.map { modelMapper.toStudySessionDTO(it) })
+    }
+
+    @GetMapping("/by-activity")
     fun getSessionsByActivity(
         @RequestParam activityId: Long,
         pageable: Pageable,

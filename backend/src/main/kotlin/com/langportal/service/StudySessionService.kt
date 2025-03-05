@@ -76,4 +76,9 @@ class StudySessionService(
     fun getLastStudySession(): StudySession? {
         return studySessionRepository.findTopByOrderByStartTimeDesc()
     }
+
+    @Transactional(readOnly = true)
+    fun getAllStudySessions(pageable: Pageable): Page<StudySession> {
+        return studySessionRepository.findAll(pageable)
+    }
 }
