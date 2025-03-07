@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.langportal.app.screens.*
 import com.langportal.app.viewmodel.DashboardViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun App() {
@@ -49,42 +51,13 @@ fun App() {
                             }
                         )
 
-                        // Content area
+                        // Content area with lazy loading
                         Box(modifier = Modifier.weight(1f)) {
-                            when {
-                                currentRoute == "/dashboard" -> DashboardScreen(viewModel = viewModel)
-                                currentRoute == "/study-activities" -> StudyActivitiesScreen(
-                                    onActivitySelected = { id -> currentRoute = "/study-activities/$id" }
-                                )
-                                currentRoute.startsWith("/study-activities/") -> {
-                                    val id = currentRoute.substringAfterLast("/")
-                                    StudyActivityDetailScreen(id)
-                                }
-                                currentRoute == "/words" -> WordsScreen()
-                                currentRoute == "/groups" -> GroupsScreen(
-                                    onGroupSelected = { id -> currentRoute = "/groups/$id" }
-                                )
-                                currentRoute == "/sessions" -> SessionsScreen()
-                                currentRoute == "/settings" -> SettingsScreen()
-                                else -> {
-                                    if (currentRoute.startsWith("/flashcards/")) {
-                                        val id = currentRoute.substringAfter("/flashcards/")
-                                        val groupId = id.toLongOrNull()
-                                        if (groupId != null) {
-                                            FlashcardScreen(
-                                                groupId = groupId,
-                                                onFinish = { currentRoute = "/groups" }
-                                            )
-                                        }
-                                    } else if (currentRoute.startsWith("/words/")) {
-                                        val id = currentRoute.substringAfterLast("/")
-                                        WordDetailScreen(id)
-                                    } else if (currentRoute.startsWith("/groups/")) {
-                                        val id = currentRoute.substringAfterLast("/")
-                                        GroupDetailScreen(id)
-                                    }
-                                }
-                            }
+                            ContentArea(
+                                currentRoute = currentRoute,
+                                viewModel = viewModel,
+                                onRouteChange = { currentRoute = it }
+                            )
                         }
 
                         // Bottom navigation for small screens
@@ -158,50 +131,61 @@ fun App() {
                             }
                         )
 
-                        // Horizontal navigation bar for larger screens
                         AppNavigationBar(
                             currentRoute = currentRoute,
                             onRouteSelected = { currentRoute = it }
                         )
 
-                        // Content area
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            when {
-                                currentRoute == "/dashboard" -> DashboardScreen(viewModel = viewModel)
-                                currentRoute == "/study-activities" -> StudyActivitiesScreen(
-                                    onActivitySelected = { id -> currentRoute = "/study-activities/$id" }
-                                )
-                                currentRoute.startsWith("/study-activities/") -> {
-                                    val id = currentRoute.substringAfterLast("/")
-                                    StudyActivityDetailScreen(id)
-                                }
-                                currentRoute == "/words" -> WordsScreen()
-                                currentRoute == "/groups" -> GroupsScreen(
-                                    onGroupSelected = { id -> currentRoute = "/groups/$id" }
-                                )
-                                currentRoute == "/sessions" -> SessionsScreen()
-                                currentRoute == "/settings" -> SettingsScreen()
-                                else -> {
-                                    if (currentRoute.startsWith("/flashcards/")) {
-                                        val id = currentRoute.substringAfter("/flashcards/")
-                                        val groupId = id.toLongOrNull()
-                                        if (groupId != null) {
-                                            FlashcardScreen(
-                                                groupId = groupId,
-                                                onFinish = { currentRoute = "/groups" }
-                                            )
-                                        }
-                                    } else if (currentRoute.startsWith("/words/")) {
-                                        val id = currentRoute.substringAfterLast("/")
-                                        WordDetailScreen(id)
-                                    } else if (currentRoute.startsWith("/groups/")) {
-                                        val id = currentRoute.substringAfterLast("/")
-                                        GroupDetailScreen(id)
-                                    }
-                                }
-                            }
-                        }
+                        ContentArea(
+                            currentRoute = currentRoute,
+                            viewModel = viewModel,
+                            onRouteChange = { currentRoute = it }
+                        )
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContentArea(
+    currentRoute: String,
+    viewModel: DashboardViewModel,
+    onRouteChange: (String) -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        when {
+            currentRoute == "/dashboard" -> DashboardScreen(viewModel = viewModel)
+            currentRoute == "/study-activities" -> StudyActivitiesScreen(
+                onActivitySelected = { id -> onRouteChange("/study-activities/$id") }
+            )
+            currentRoute.startsWith("/study-activities/") -> {
+                val id = currentRoute.substringAfterLast("/")
+                StudyActivityDetailScreen(id)
+            }
+            currentRoute == "/words" -> WordsScreen()
+            currentRoute == "/groups" -> GroupsScreen(
+                onGroupSelected = { id -> onRouteChange("/groups/$id") }
+            )
+            currentRoute == "/sessions" -> SessionsScreen()
+            currentRoute == "/settings" -> SettingsScreen()
+            else -> {
+                if (currentRoute.startsWith("/flashcards/")) {
+                    val id = currentRoute.substringAfter("/flashcards/")
+                    val groupId = id.toLongOrNull()
+                    if (groupId != null) {
+                        FlashcardScreen(
+                            groupId = groupId,
+                            onFinish = { onRouteChange("/groups") }
+                        )
+                    }
+                } else if (currentRoute.startsWith("/words/")) {
+                    val id = currentRoute.substringAfterLast("/")
+                    WordDetailScreen(id)
+                } else if (currentRoute.startsWith("/groups/")) {
+                    val id = currentRoute.substringAfterLast("/")
+                    GroupDetailScreen(id)
                 }
             }
         }
@@ -213,54 +197,32 @@ private fun AppNavigationBar(
     currentRoute: String,
     onRouteSelected: (String) -> Unit
 ) {
+    val navigationButtons = remember {
+        listOf(
+            Triple("Dashboard", Icons.Default.Dashboard, "/dashboard"),
+            Triple("Study Activities", Icons.Default.School, "/study-activities"),
+            Triple("Words", Icons.Default.Translate, "/words"),
+            Triple("Word Groups", Icons.Default.Category, "/groups"),
+            Triple("Sessions", Icons.Default.Timeline, "/sessions"),
+            Triple("Settings", Icons.Default.Settings, "/settings")
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        NavButton(
-            text = "Dashboard",
-            icon = Icons.Default.Dashboard,
-            route = "/dashboard",
-            currentRoute = currentRoute,
-            onRouteSelected = onRouteSelected
-        )
-        NavButton(
-            text = "Study Activities",
-            icon = Icons.Default.School,
-            route = "/study-activities",
-            currentRoute = currentRoute,
-            onRouteSelected = onRouteSelected
-        )
-        NavButton(
-            text = "Words",
-            icon = Icons.Default.Translate,
-            route = "/words",
-            currentRoute = currentRoute,
-            onRouteSelected = onRouteSelected
-        )
-        NavButton(
-            text = "Word Groups",
-            icon = Icons.Default.Category,
-            route = "/groups",
-            currentRoute = currentRoute,
-            onRouteSelected = onRouteSelected
-        )
-        NavButton(
-            text = "Sessions",
-            icon = Icons.Default.Timeline,
-            route = "/sessions",
-            currentRoute = currentRoute,
-            onRouteSelected = onRouteSelected
-        )
-        NavButton(
-            text = "Settings",
-            icon = Icons.Default.Settings,
-            route = "/settings",
-            currentRoute = currentRoute,
-            onRouteSelected = onRouteSelected
-        )
+        navigationButtons.forEach { (text, icon, route) ->
+            NavButton(
+                text = text,
+                icon = icon,
+                route = route,
+                currentRoute = currentRoute,
+                onRouteSelected = onRouteSelected
+            )
+        }
     }
 }
 

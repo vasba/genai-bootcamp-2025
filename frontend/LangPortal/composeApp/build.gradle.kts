@@ -17,6 +17,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
 }
 
+@OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 kotlin {
     // Target configuration
     wasmJs {
@@ -30,6 +31,18 @@ kotlin {
                         add(project.rootDir.path)
                         add(project.projectDir.path)
                     }
+                }
+                
+                cssSupport { enabled.set(true) }
+                mode = KotlinWebpackConfig.Mode.DEVELOPMENT
+                sourceMaps = true
+            }
+            
+            webpackTask {
+                mainOutputFileName.set("composeApp.js")
+                output.apply {
+                    libraryTarget = "umd"
+                    globalObject = "globalThis"
                 }
             }
         }
