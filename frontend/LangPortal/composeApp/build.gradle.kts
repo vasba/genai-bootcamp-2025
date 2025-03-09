@@ -2,11 +2,13 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.buildKonfig)
     kotlin("plugin.serialization") version "2.1.0"
 }
 
@@ -104,5 +106,13 @@ kotlin {
 compose {
     experimental {
         web.application {}
+    }
+}
+
+buildkonfig {
+    packageName = "com.langportal.app"
+    
+    defaultConfigs {
+        buildConfigField(Type.STRING, "BASE_URL", System.getenv("BACKEND_URL") ?: "http://localhost:8080/api")
     }
 }

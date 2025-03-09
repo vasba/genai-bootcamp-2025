@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import com.langportal.app.BuildKonfig
 
 object KtorHttpClient {
     val client = HttpClient {
@@ -16,5 +17,5 @@ object KtorHttpClient {
         }
     }
 
-    const val BASE_URL = "http://localhost:8080/api"
+    val BASE_URL = BuildKonfig.BASE_URL
 }

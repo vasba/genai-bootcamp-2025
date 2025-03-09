@@ -5,7 +5,6 @@ WORKDIR /app
 COPY . .
 
 RUN chmod +x ./gradlew
-RUN ./gradlew wasmJsBrowserDistribution
 
 EXPOSE 8090
 
